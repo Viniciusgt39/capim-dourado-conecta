@@ -1,5 +1,7 @@
 import type { Offer, Product, Store } from "@/lib/catalog";
 
+export const DEMO_RESERVATION_DURATION_SECONDS = 20;
+
 export type ReservationStatus = "PENDING" | "CONFIRMED" | "REJECTED" | "CANCELLED" | "EXPIRED";
 
 export interface ReservationItem {

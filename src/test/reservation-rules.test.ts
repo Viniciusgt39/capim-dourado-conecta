@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { demoAvailabilityDelayMs, effectiveStatus, formatRemaining, isActiveReservation, remainingMilliseconds, type Reservation } from "@/lib/reservations";
+import { DEMO_RESERVATION_DURATION_SECONDS, demoAvailabilityDelayMs, effectiveStatus, formatRemaining, isActiveReservation, remainingMilliseconds, type Reservation } from "@/lib/reservations";
 
 const reservation = (status: Reservation["status"], expiresAt: string) => ({ status, expires_at: expiresAt }) as Reservation;
 
@@ -18,7 +18,12 @@ describe("Regras de expiração e cancelamento", () => {
     expect(effectiveStatus(reservation("REJECTED", "2026-11-14T11:59:59Z"), now)).toBe("REJECTED");
   });
 
-  it("duas horas são exibidas como 02:00:00", () => {
+  it("a demonstração usa exatamente 20 segundos e exibe 00:00:20", () => {
+    expect(DEMO_RESERVATION_DURATION_SECONDS).toBe(20);
+    expect(formatRemaining("2026-11-14T12:00:20Z", now)).toBe("00:00:20");
+  });
+
+  it("duas horas continuam sendo exibidas como 02:00:00", () => {
     expect(formatRemaining("2026-11-14T14:00:00Z", now)).toBe("02:00:00");
   });
 
