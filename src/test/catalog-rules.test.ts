@@ -27,8 +27,8 @@ describe("Busca estruturada do catálogo", () => {
   });
 
   it("retorna somente produtos cadastrados que obedecem todos os filtros", () => {
-    const matching = product();
-    const expensive = product({ id: "outro", name: "Tênis Preto", color: "preto" });
+    const matching = product({ offers: [{ id: "tenis-movida", store_id: "movida", price_cents: 23990 } as Product["offers"][number]] });
+    const expensive = product({ id: "outro", name: "Tênis Preto", color: "preto", offers: [{ id: "outro-oferta", store_id: "movida", price_cents: 23990 } as Product["offers"][number]] });
     const result = filterProducts([matching, expensive], parseSearch("tênis branco até R$ 250"));
     expect(result.map((item) => item.id)).toEqual(["tenis-alba"]);
   });
