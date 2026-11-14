@@ -2,6 +2,27 @@
 
 Data da verificação: 14/11/2026 (UTC).
 
+## Incremento Gemini/mobile — 14/11/2026
+
+`bun run test`: **4 arquivos / 18 testes aprovados**. Novos casos verificam filtro de 250 reais, rejeição de facetas inventadas, mesma oferta respeitando mínimo/máximo, aranha no clique 13, base mínima de tendência, peso de reservas no ranking, entrada por QR e exclusão de paradas expiradas.
+
+Chromium contra a aplicação real, com login pelas contas demonstrativas existentes:
+
+- Pesquisa “Quero um tênis branco até 250 reais” chamou Gemini e exibiu somente o tênis do catálogo, com cor/categoria/teto aplicados.
+- Uma primeira resposta HTTP 200 falhou na validação local; instruções explícitas do objeto foram corrigidas e a pesquisa foi repetida com sucesso. Não houve substituição de modelo.
+- Analisar interesses retornou sugestões de produtos existentes; seleção restringida a candidatos permitidos. São sinais, não previsão treinada.
+- Mais 12 cliques na mesma pesquisa exibiram a aranha (13 no total), sem repetir chamada Gemini.
+- Duas missões simuladas persistiram após recarregar e seus dois cupons apareceram na aba Cupons. Consulta ao banco confirmou 2 conclusões / 2 cupons de missão.
+- Banco confirmou 2 eventos de pesquisa. Movida mostrou 2 pesquisas relacionadas ao tênis, sem identidade/frase, e amostra insuficiente para tendência.
+- Analisar oportunidades no lojista chamou Gemini real e retornou análise conservadora de amostra pequena.
+- Foram criadas reservas reais na demo para Movida e Essenza. `/app/visita?entrada=sul` reconheceu a entrada e exibiu Essenza → Movida no mapa fictício; reservas expiradas não apareceram. As duas reservas foram canceladas pela interface depois do teste.
+- Vitrine, visita e missões: 390 × 844, largura de documento 390, sem rolagem horizontal. Nenhum erro de página capturado nos fluxos concluídos.
+- Registros do AI Gateway confirmaram chamadas Gemini `google/gemini-3.1-flash-lite` HTTP 200 de busca/interesses/oportunidades. Compilação automática terminou sem erros.
+
+Capturas foram inspecionadas durante a execução; estão em diretórios temporários de verificação, não nos anexos antigos. Dados novos de demo (pesquisas, duas missões/cupons e reservas canceladas) foram preservados para demonstrar persistência. Nenhum dado real de cliente foi utilizado.
+
+Limites: scanner físico/câmera, QR instalado no shopping, mapa oficial, tempo real de caminhada, confirmação real de visita, estacionamento, descontos comerciais, treino/calibração de predição, infraestrutura de escala, voz e login social externo não foram verificados/implementados neste incremento. O parâmetro do link QR, não localização física, identifica a entrada.
+
 ## Testes automatizados executados
 
 Comando: `bun run test`.
