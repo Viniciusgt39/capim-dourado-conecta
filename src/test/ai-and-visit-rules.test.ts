@@ -118,4 +118,9 @@ describe("Visita ilustrativa", () => {
     );
     expect(stops.map((s) => s.id)).toEqual(["essenza", "movida"]);
   });
+  it("Casa Aurora recebe uma parada própria, separada da Entrada Leste", () => {
+    const stops = buildVisit([r("casa-aurora", "2026-11-14T14:00:00Z")], "norte", now);
+    expect(stops[0]?.node).toBe(5);
+    expect(stops[0]?.node).not.toBe(entrances.find((entry) => entry.id === "leste")?.node);
+  });
 });

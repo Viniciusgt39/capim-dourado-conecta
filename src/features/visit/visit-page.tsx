@@ -13,6 +13,7 @@ const mapNodes: Record<number, { x: number; y: number }> = {
   2: { x: 360, y: 150 },
   3: { x: 318, y: 210 },
   4: { x: 200, y: 272 },
+  5: { x: 82, y: 210 },
 };
 const galleryCenter = { x: 200, y: 150 };
 function nodePoint(node: number) {
@@ -20,6 +21,7 @@ function nodePoint(node: number) {
 }
 const galleryStores = [
   { id: "movida", name: "Movida", node: 1 },
+  { id: "casa-aurora", name: "Casa Aurora", node: 5 },
   { id: "essenza", name: "Essenza", node: 3 },
 ];
 
@@ -177,7 +179,7 @@ function VisitMap({
         aria-label={`Mapa ilustrativo a partir da ${origin.name}, com ${route.length} paradas: ${route.map((stop) => stop.name).join(", ") || "nenhuma"}`}
       >
         <path
-          d="M200 28V272M82 100L200 150L360 150M82 100L200 150L318 210L200 272"
+          d="M200 28V272M82 100V210M82 100L200 150L360 150M82 210L200 150L318 210L200 272"
           fill="none"
           className="stroke-border"
           strokeWidth="18"
@@ -185,7 +187,7 @@ function VisitMap({
           strokeLinejoin="round"
         />
         <path
-          d="M200 28V272M82 100L200 150L360 150M82 100L200 150L318 210L200 272"
+          d="M200 28V272M82 100V210M82 100L200 150L360 150M82 210L200 150L318 210L200 272"
           fill="none"
           className="stroke-card"
           strokeWidth="10"
