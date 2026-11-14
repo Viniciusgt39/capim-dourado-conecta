@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_access_state: {
+        Row: {
+          blocked_reason: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          blocked_reason?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          blocked_reason?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_preferences: {
+        Row: {
+          consent: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consent?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consent?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_events: {
         Row: {
           action: string
@@ -138,6 +182,62 @@ export type Database = {
           },
           {
             foreignKeyName: "merchant_memberships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_completions: {
+        Row: {
+          completed_at: string
+          coupon_id: string
+          id: string
+          product_id: string
+          store_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          coupon_id: string
+          id?: string
+          product_id: string
+          store_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          coupon_id?: string
+          id?: string
+          product_id?: string
+          store_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_completions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_completions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_completions_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_completions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -423,6 +523,44 @@ export type Database = {
           },
         ]
       }
+      search_events: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          product_ids: string[]
+          request_id: string
+          result_count: number
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          product_ids?: string[]
+          request_id: string
+          result_count: number
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          product_ids?: string[]
+          request_id?: string
+          result_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stores: {
         Row: {
           active: boolean
@@ -520,6 +658,10 @@ export type Database = {
         Args: { p_reservation_id: string }
         Returns: undefined
       }
+      complete_demo_mission: {
+        Args: { p_product_id: string; p_store_id: string }
+        Returns: string
+      }
       create_reservation: {
         Args: { p_idempotency_key: string; p_items: Json }
         Returns: string
@@ -537,6 +679,7 @@ export type Database = {
       }
       is_store_member: { Args: { _store_id: string }; Returns: boolean }
       merchant_insights: { Args: { p_store_id: string }; Returns: Json }
+      search_demand_insights: { Args: never; Returns: Json }
       set_offer_availability: {
         Args: {
           p_availability: Database["public"]["Enums"]["offer_availability"]
