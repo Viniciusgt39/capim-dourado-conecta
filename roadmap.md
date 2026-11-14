@@ -30,5 +30,5 @@
 - [x] Testar os fluxos alterados e registrar evidências.
 
 ## Demonstração acelerada de expiração
-- [ ] Criar novas reservas com 20 segundos, mantendo documentada a regra original de 2 horas.
-- [ ] Fazer o gato aparecer quando o contador zerar e verificar o fluxo no navegador.
+- [x] Criar novas reservas com 20 segundos, mantendo documentada a regra original de 2 horas.
+- [x] Fazer o gato aparecer quando o contador zerar e verificar o fluxo no navegador.
