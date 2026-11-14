@@ -142,8 +142,7 @@ export function filterProducts(products: Product[], filters: SearchFilters) {
     }
     const relevantOffers = filters.store ? product.offers.filter((offer) => offer.store_id === filters.store) : product.offers;
     if (filters.store && relevantOffers.length === 0) return false;
-    if (min !== null && !relevantOffers.some((offer) => offer.price_cents >= min)) return false;
-    if (max !== null && !relevantOffers.some((offer) => offer.price_cents <= max)) return false;
+    if ((min !== null || max !== null) && !relevantOffers.some((offer) => (min === null || offer.price_cents >= min) && (max === null || offer.price_cents <= max))) return false;
     return true;
   });
 }
