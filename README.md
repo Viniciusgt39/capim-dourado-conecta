@@ -37,7 +37,7 @@ Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro 
 2. Autorize a CapimAI na vitrine e pesquise “Quero um tênis branco até R$ 250”. A autorização é opcional para navegar e usar filtros manuais.
 3. Abra o tênis, compare Movida e Essenza, favorite e adicione ofertas à seleção.
 4. Adicione outro item, revise e confirme a solicitação multiloja.
-5. Veja os códigos e a contagem regressiva de duas horas. Entre 5 e 20 segundos após a solicitação, uma notificação de disponibilidade explicitamente simulada aparece no sino; ela não altera o status nem substitui o lojista.
+5. Veja os códigos e a contagem regressiva demonstrativa de 20 segundos; ao zerar, o gato avisa que a reserva expirou. Entre 5 e 20 segundos após a solicitação, uma notificação de disponibilidade explicitamente simulada pode aparecer no sino antes da expiração; ela não altera o status nem substitui o lojista. A regra original de 2 horas foi acelerada somente neste mockup.
 6. Saia e entre como Lojista Movida; confirme somente a parte da Movida.
 7. Entre como Lojista Essenza; recuse ou marque uma oferta como indisponível.
 8. Volte ao cliente e atualize as reservas para observar os estados independentes.
@@ -48,8 +48,8 @@ Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro 
 - Autenticação e autorização por cliente/lojista, com isolamento por loja no banco.
 - Catálogo responsivo com busca textual estruturada, voz quando suportada, filtros combináveis e comparativo.
 - Favoritos persistentes e privados por cliente.
-- Seleção e reserva multiloja com grupo, reservas independentes, snapshot de preço, idempotência e expiração de 2 horas calculada no servidor.
-- Estados pendente, confirmada, recusada, cancelada e expirada; alerta abaixo de 30 minutos e cancelamento em duas etapas.
+- Seleção e reserva multiloja com grupo, reservas independentes, snapshot de preço e idempotência; novas reservas do mockup expiram em 20 segundos no servidor, enquanto a regra original de 2 horas permanece documentada.
+- Estados pendente, confirmada, recusada, cancelada e expirada; contador acelerado, aviso do gato ao zerar e cancelamento em duas etapas.
 - Painel do lojista com confirmação/recusa e disponibilidade manual compartilhada.
 - Indisponibilidade recusa automaticamente pendentes afetadas, sem cancelar confirmadas silenciosamente.
 - Recomendações em cartões de produto, cupons ilustrativos e notificações in-app.
