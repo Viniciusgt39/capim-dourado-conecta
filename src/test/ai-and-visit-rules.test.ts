@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { demandTrend, isSpiderClick, validateExtraction } from "@/features/ai/contracts";
 import { rankBehavior } from "@/features/recommendations/model";
-import { buildVisit, validEntrance } from "@/features/visit/model";
+import { buildVisit, entrances, validEntrance } from "@/features/visit/model";
 import { emptyFilters, filterProducts, type CatalogData, type Product } from "@/lib/catalog";
 import type { Reservation } from "@/lib/reservations";
 
