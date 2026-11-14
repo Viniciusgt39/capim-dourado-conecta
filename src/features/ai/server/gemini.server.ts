@@ -6,11 +6,11 @@ import { GEMINI_MODEL } from "../contracts";
 export async function askGemini<T>(key: string, schema: z.ZodType<T>, system: string, prompt: string, block: (reason: string) => Promise<void>): Promise<T> {
   const provider = createLovableAiGatewayProvider(key, undefined, { baseURL: "https://ai.gateway.lovable.dev/v1" });
   try {
-    const result = streamText({ model: provider(GEMINI_MODEL), output: Output.object({ schema }), system, prompt, maxRetries: 0 });
+    const result = streamText({ model: provider(GEMINI_MODEL), output: Output.object({ schema }), system: `${system}\nResponda exclusivamente com um objeto JSON válido, sem markdown nem explicação fora do JSON.`, prompt, maxRetries: 0 });
     return await result.output;
   } catch (error) {
     if (NoObjectGeneratedError.isInstance(error)) {
-      try { return schema.parse(JSON.parse(error.text ?? "")); } catch { throw new Error("O Gemini não retornou uma interpretação válida. Use os filtros manuais."); }
+      try { return schema.parse(JSON.parse((error.text ?? "").replace(/^```(?:json)?\s*|\s*```$/g, "").trim())); } catch { throw new Error("O Gemini não retornou uma interpretação válida. Use os filtros manuais."); }
     }
     if (APICallError.isInstance(error)) {
       let message = "Não foi possível consultar o Gemini. Use os filtros manuais.";
