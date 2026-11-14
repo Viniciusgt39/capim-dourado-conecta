@@ -1,29 +1,73 @@
-# Welcome to your Lovable project
+# Capim Dourado Connect
 
-This project was built with [Lovable](https://lovable.dev).
+Protótipo funcional da equipe **Scizor38** para o Desafio 04 do HackaRun UniCatólica 2026: integração da jornada de compra digital e física.
 
-## Build with Lovable
+> Demonstração não oficial. Lojas, marcas, produtos, preços, reservas, notificações e cupons são fictícios. Não há integração com o aplicativo, ERP, estoque ou sistemas do shopping.
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## Executar localmente
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requisitos: Bun 1.3+ e acesso ao projeto com Lovable Cloud conectado.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+bun install
+bun run dev
 ```
 
-## Built with
+A aplicação abre em `http://localhost:8080`.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+```sh
+bun run test
+```
+
+## Contas fictícias de demonstração
+
+Todas usam a senha `Demo2026!`:
+
+| Perfil | E-mail | Escopo |
+|---|---|---|
+| Cliente | `cliente.demo@exemplo.test` | Catálogo, favoritos e próprias reservas |
+| Lojista A | `lojista.a@exemplo.test` | Somente Movida |
+| Lojista B | `lojista.b@exemplo.test` | Somente Essenza |
+
+Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro público sempre cria o papel de cliente; não permite escolher loja ou papel de lojista.
+
+## Fluxo para demonstrar
+
+1. Abra a landing e entre como cliente demo.
+2. Pesquise “Quero um tênis branco até R$ 250”.
+3. Abra o tênis, compare Movida e Essenza, favorite e adicione ofertas à seleção.
+4. Adicione outro item, revise e confirme a solicitação multiloja.
+5. Veja os códigos e a contagem regressiva de duas horas.
+6. Saia e entre como Lojista Movida; confirme somente a parte da Movida.
+7. Entre como Lojista Essenza; recuse ou marque uma oferta como indisponível.
+8. Volte ao cliente e atualize as reservas para observar os estados independentes.
+
+## Implementado
+
+- Landing pública de entrada por QR/link, com nota de não-oficialidade.
+- Autenticação e autorização por cliente/lojista, com isolamento por loja no banco.
+- Catálogo responsivo com busca textual estruturada, voz quando suportada, filtros combináveis e comparativo.
+- Favoritos persistentes e privados por cliente.
+- Seleção e reserva multiloja com grupo, reservas independentes, snapshot de preço, idempotência e expiração de 2 horas calculada no servidor.
+- Estados pendente, confirmada, recusada, cancelada e expirada; alerta abaixo de 30 minutos e cancelamento em duas etapas.
+- Painel do lojista com confirmação/recusa e disponibilidade manual compartilhada.
+- Indisponibilidade recusa automaticamente pendentes afetadas, sem cancelar confirmadas silenciosamente.
+- Recomendações determinísticas, cupons ilustrativos e notificações in-app.
+- Insights agregados sem favoritos identificáveis e regra explicável de tendência.
+- Easter eggs acessíveis da aranha e do gato, com redução de movimento.
+
+## Fora do MVP / sem integração real
+
+Pagamento online, ERP, estoque numérico, WhatsApp Business, mapas indoor, provador inteligente, fidelidade, push nativo e integração técnica com o aplicativo oficial. O reconhecimento de voz é um recurso do navegador; a busca estruturada usa parser local determinístico, não IA generativa.
+
+## Estrutura
+
+- `src/routes`: landing, autenticação, área protegida do cliente e painel do lojista.
+- `src/features`: catálogo, conta, autenticação e reservas.
+- `src/lib`: tipos, parser, filtros e regras puras testáveis.
+- `drizzle/migrations`: esquema, RLS, funções transacionais e dados fictícios.
+- `docs/scizor38`: documentos de origem importados do repositório.
+
+## Tecnologia e origem dos recursos
+
+TanStack Start, React, TypeScript, Tailwind CSS, Lucide, Lovable Cloud (autenticação e PostgreSQL). As imagens de produtos foram geradas para esta demonstração e não representam marcas reais. Fontes: Cormorant Garamond e Inter, distribuídas pelo Google Fonts. Consulte `DECISOES.md`, `USO_DE_IA.md` e `TESTES_E_EVIDENCIAS.md`.
