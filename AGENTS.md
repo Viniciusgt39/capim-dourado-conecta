@@ -30,3 +30,7 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - The product uses TanStack Start server functions with Lovable Cloud authentication and PostgreSQL RLS, because customer/merchant permissions and multi-store reservation transactions must be enforced server-side.
+- Keep domain modules under src/features with pure models, client components, and authenticated functions; server-only AI helpers stay in *.server.ts files so secrets and prompts never reach browser bundles.
+- Gemini calls use the Lovable AI Gateway through AI SDK, explicit user actions, stored consent for personal-interest processing, validated catalog facets and a persisted provider-denial circuit breaker; this limits disclosure, hallucinated inventory and accidental billed fan-out.
+- Merchant demand uses a membership-scoped aggregate PostgreSQL function, never direct access to customers' search rows, because behavioral identities must remain private.
+- Visit routing uses a labeled fictional gallery and active reservation stops; missions use atomic idempotent demonstrative rewards, because neither official indoor maps nor physical visit validation are integrated.

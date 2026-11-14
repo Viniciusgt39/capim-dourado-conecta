@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowRight, Bug, Check, Clock3, GitCompareArrows, HelpCircle, MapPin, QrCode, Search, ShieldCheck, ShoppingBag, Store } from "lucide-react";
+import { useEffect } from "react";
+import { ArrowRight, Check, Clock3, GitCompareArrows, MapPin, QrCode, Search, ShieldCheck, ShoppingBag, Store } from "lucide-react";
+import { validEntrance } from "@/features/visit/model";
 import { Brand } from "@/components/app/brand";
 import { Button } from "@/components/ui/button";
 import tenisHero from "@/assets/products/tenis-branco.jpg";
@@ -19,21 +20,17 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
-  const [helpClicks, setHelpClicks] = useState(0);
-  const [spider, setSpider] = useState(false);
-  function handleHelp() {
-    const next = helpClicks + 1;
-    setHelpClicks(next);
-    if (next === 13) setSpider(true);
-  }
+  useEffect(() => {
+    const entry = new URLSearchParams(window.location.search).get("entrada");
+    if (entry) sessionStorage.setItem("capim-entrance", validEntrance(entry));
+  }, []);
   return (
     <main className="overflow-hidden bg-background">
       <header className="absolute inset-x-0 top-0 z-20 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-12">
         <Brand />
         <nav className="hidden items-center gap-8 text-xs font-medium text-muted-foreground md:flex" aria-label="Navegação principal"><a className="hover:text-primary" href="#como-funciona">Como funciona</a><a className="hover:text-primary" href="#lojistas">Para lojistas</a><a className="hover:text-primary" href="#sobre">Sobre a demo</a></nav>
-        <div className="flex items-center gap-1"><Button asChild variant="ghost" size="sm"><Link to="/auth">Entrar</Link></Button><Button variant="ghost" size="icon" className="rounded-full" aria-label="Ajuda e acessibilidade" onClick={handleHelp}><HelpCircle /></Button></div>
+        <div className="flex items-center gap-1"><Button asChild variant="ghost" size="sm"><Link to="/auth">Entrar</Link></Button></div>
       </header>
-      {spider && <div className="spider-dropping fixed right-10 top-0 z-50 flex flex-col items-center text-foreground" role="status"><span className="h-28 w-px bg-foreground/40" /><span className="rounded-full bg-gold-soft p-3"><Bug className="h-8 w-8" /></span><span className="mt-2 max-w-40 rounded-md bg-card p-2 text-center text-xs shadow-soft">Você encontrou nossa aranha guardiã!</span></div>}
       <section className="hero-surface relative flex min-h-[100svh] items-center pt-24">
         <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 pb-16 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-12">
           <div className="animate-fade-up max-w-2xl">

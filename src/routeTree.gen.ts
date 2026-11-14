@@ -16,7 +16,9 @@ import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/ap
 import { Route as AuthenticatedLojistaRouteImport } from './routes/_authenticated/lojista'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppContaRouteImport } from './routes/_authenticated/app.conta'
+import { Route as AuthenticatedAppMissoesRouteImport } from './routes/_authenticated/app.missoes'
 import { Route as AuthenticatedAppReservasRouteImport } from './routes/_authenticated/app.reservas'
+import { Route as AuthenticatedAppVisitaRouteImport } from './routes/_authenticated/app.visita'
 import { Route as AuthenticatedAppProdutoIdRouteImport } from './routes/_authenticated/app.produto.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,12 +55,22 @@ const AuthenticatedAppContaRoute = AuthenticatedAppContaRouteImport.update({
   path: '/conta',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppMissoesRoute = AuthenticatedAppMissoesRouteImport.update({
+  id: '/missoes',
+  path: '/missoes',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppReservasRoute =
   AuthenticatedAppReservasRouteImport.update({
     id: '/reservas',
     path: '/reservas',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppVisitaRoute = AuthenticatedAppVisitaRouteImport.update({
+  id: '/visita',
+  path: '/visita',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppProdutoIdRoute =
   AuthenticatedAppProdutoIdRouteImport.update({
     id: '/produto/$id',
@@ -72,7 +84,9 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/lojista': typeof AuthenticatedLojistaRoute
   '/app/conta': typeof AuthenticatedAppContaRoute
+  '/app/missoes': typeof AuthenticatedAppMissoesRoute
   '/app/reservas': typeof AuthenticatedAppReservasRoute
+  '/app/visita': typeof AuthenticatedAppVisitaRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/produto/$id': typeof AuthenticatedAppProdutoIdRoute
 }
@@ -81,7 +95,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/lojista': typeof AuthenticatedLojistaRoute
   '/app/conta': typeof AuthenticatedAppContaRoute
+  '/app/missoes': typeof AuthenticatedAppMissoesRoute
   '/app/reservas': typeof AuthenticatedAppReservasRoute
+  '/app/visita': typeof AuthenticatedAppVisitaRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/produto/$id': typeof AuthenticatedAppProdutoIdRoute
 }
@@ -93,7 +109,9 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/lojista': typeof AuthenticatedLojistaRoute
   '/_authenticated/app/conta': typeof AuthenticatedAppContaRoute
+  '/_authenticated/app/missoes': typeof AuthenticatedAppMissoesRoute
   '/_authenticated/app/reservas': typeof AuthenticatedAppReservasRoute
+  '/_authenticated/app/visita': typeof AuthenticatedAppVisitaRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/produto/$id': typeof AuthenticatedAppProdutoIdRoute
 }
@@ -105,7 +123,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/lojista'
     | '/app/conta'
+    | '/app/missoes'
     | '/app/reservas'
+    | '/app/visita'
     | '/app/'
     | '/app/produto/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -114,7 +134,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/lojista'
     | '/app/conta'
+    | '/app/missoes'
     | '/app/reservas'
+    | '/app/visita'
     | '/app'
     | '/app/produto/$id'
   id:
@@ -125,7 +147,9 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/_authenticated/lojista'
     | '/_authenticated/app/conta'
+    | '/_authenticated/app/missoes'
     | '/_authenticated/app/reservas'
+    | '/_authenticated/app/visita'
     | '/_authenticated/app/'
     | '/_authenticated/app/produto/$id'
   fileRoutesById: FileRoutesById
@@ -187,11 +211,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppContaRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/missoes': {
+      id: '/_authenticated/app/missoes'
+      path: '/missoes'
+      fullPath: '/app/missoes'
+      preLoaderRoute: typeof AuthenticatedAppMissoesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/reservas': {
       id: '/_authenticated/app/reservas'
       path: '/reservas'
       fullPath: '/app/reservas'
       preLoaderRoute: typeof AuthenticatedAppReservasRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/visita': {
+      id: '/_authenticated/app/visita'
+      path: '/visita'
+      fullPath: '/app/visita'
+      preLoaderRoute: typeof AuthenticatedAppVisitaRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/produto/$id': {
@@ -206,14 +244,18 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppContaRoute: typeof AuthenticatedAppContaRoute
+  AuthenticatedAppMissoesRoute: typeof AuthenticatedAppMissoesRoute
   AuthenticatedAppReservasRoute: typeof AuthenticatedAppReservasRoute
+  AuthenticatedAppVisitaRoute: typeof AuthenticatedAppVisitaRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppProdutoIdRoute: typeof AuthenticatedAppProdutoIdRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppContaRoute: AuthenticatedAppContaRoute,
+  AuthenticatedAppMissoesRoute: AuthenticatedAppMissoesRoute,
   AuthenticatedAppReservasRoute: AuthenticatedAppReservasRoute,
+  AuthenticatedAppVisitaRoute: AuthenticatedAppVisitaRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppProdutoIdRoute: AuthenticatedAppProdutoIdRoute,
 }

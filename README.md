@@ -34,7 +34,7 @@ Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro 
 ## Fluxo para demonstrar
 
 1. Abra a landing e entre como cliente demo.
-2. Pesquise “Quero um tênis branco até R$ 250”.
+2. Autorize o Gemini na vitrine e pesquise “Quero um tênis branco até R$ 250”. A autorização é opcional para navegar e usar filtros manuais.
 3. Abra o tênis, compare Movida e Essenza, favorite e adicione ofertas à seleção.
 4. Adicione outro item, revise e confirme a solicitação multiloja.
 5. Veja os códigos e a contagem regressiva de duas horas.
@@ -55,15 +55,19 @@ Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro 
 - Recomendações determinísticas, cupons ilustrativos e notificações in-app.
 - Insights agregados sem favoritos identificáveis e regra explicável de tendência.
 - Easter eggs acessíveis da aranha e do gato, com redução de movimento.
+- Gemini real: extração estruturada, sugestões de interesses e análise de oportunidades por ação explícita.
+- Pesquisas agregadas da própria loja; tendências conservadoras, sem identidade dos clientes.
+- Visita com entrada por link QR e rota fictícia das reservas ativas.
+- Missões simuladas e cupons persistentes na conta.
 
 ## Fora do MVP / sem integração real
 
-Pagamento online, ERP, estoque numérico, WhatsApp Business, mapas indoor, provador inteligente, fidelidade, push nativo e integração técnica com o aplicativo oficial. O reconhecimento de voz é um recurso do navegador; a busca estruturada usa parser local determinístico, não IA generativa.
+Pagamento online, ERP, estoque numérico, WhatsApp Business, mapas indoor reais, provador inteligente, fidelidade, push nativo e integração técnica com o aplicativo oficial. O reconhecimento de voz é um recurso do navegador. Gemini usa Lovable AI Gateway e consome créditos; a chave exposta no chat não foi salva nem utilizada. Não há desconto comercial ou estacionamento grátis real.
 
 ## Estrutura
 
 - `src/routes`: landing, autenticação, área protegida do cliente e painel do lojista.
-- `src/features`: catálogo, conta, autenticação e reservas.
+- `src/features`: catálogo, conta, autenticação, reservas, IA, recomendações, lojista, visita e missões.
 - `src/lib`: tipos, parser, filtros e regras puras testáveis.
 - `drizzle/migrations`: esquema, RLS, funções transacionais e dados fictícios.
 - `docs/scizor38`: documentos de origem importados do repositório.
@@ -71,3 +75,5 @@ Pagamento online, ERP, estoque numérico, WhatsApp Business, mapas indoor, prova
 ## Tecnologia e origem dos recursos
 
 TanStack Start, React, TypeScript, Tailwind CSS, Lucide, Lovable Cloud (autenticação e PostgreSQL). As imagens de produtos foram geradas para esta demonstração e não representam marcas reais. Fontes: Cormorant Garamond e Inter, distribuídas pelo Google Fonts. Consulte `DECISOES.md`, `USO_DE_IA.md` e `TESTES_E_EVIDENCIAS.md`.
+
+**Para outra ferramenta:** comece por `GUIA_DO_PROJETO.md`, que descreve módulos, contratos, segurança, justificativas e preparação para escala. Não altere os documentos originais em `docs/scizor38/`.
