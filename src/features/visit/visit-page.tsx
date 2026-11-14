@@ -7,6 +7,19 @@ import { getCustomerReservations } from "@/features/reservations/functions";
 import { buildVisit, entrances, validEntrance, type Entrance } from "./model";
 import { toast } from "sonner";
 
+const mapNodes: Record<number, { x: number; y: number }> = {
+  0: { x: 200, y: 28 },
+  1: { x: 82, y: 100 },
+  2: { x: 360, y: 150 },
+  3: { x: 318, y: 210 },
+  4: { x: 200, y: 272 },
+};
+const galleryCenter = { x: 200, y: 150 };
+const galleryStores = [
+  { id: "movida", name: "Movida", node: 1 },
+  { id: "essenza", name: "Essenza", node: 3 },
+];
+
 export function VisitPage({ initialEntrance }: { initialEntrance?: string | undefined }) {
   const [entrance, setEntrance] = useState<Entrance>(validEntrance(initialEntrance));
   const [now, setNow] = useState(Date.now());
@@ -26,10 +39,12 @@ export function VisitPage({ initialEntrance }: { initialEntrance?: string | unde
     refetchInterval: 30_000,
   });
   const route = buildVisit(reservations, entrance, now);
+
   function select(value: Entrance) {
     setEntrance(value);
     sessionStorage.setItem("capim-entrance", value);
   }
+
   async function share() {
     const text = `Roteiro ilustrativo — ${entrances.find((e) => e.id === entrance)?.name}: ${route.map((s) => `${s.name} (${s.code})`).join(" → ")}. Não é uma planta real do shopping.`;
     try {
@@ -43,6 +58,7 @@ export function VisitPage({ initialEntrance }: { initialEntrance?: string | unde
       toast.info("Compartilhamento não concluído.");
     }
   }
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-8">
       <p className="eyebrow text-primary">Do digital ao presencial</p>
@@ -51,42 +67,22 @@ export function VisitPage({ initialEntrance }: { initialEntrance?: string | unde
         Rota fictícia · Não use como orientação física no shopping.
       </p>
       <div className="mt-7 flex flex-wrap gap-2" aria-label="Entrada do shopping">
-        {entrances.map((e) => (
+        {entrances.map((entry) => (
           <Button
-            key={e.id}
-            variant={entrance === e.id ? "default" : "outline"}
+            key={entry.id}
+            variant={entrance === entry.id ? "default" : "outline"}
             className="h-11"
-            onClick={() => select(e.id)}
-            aria-pressed={entrance === e.id}
+            onClick={() => select(entry.id)}
+            aria-pressed={entrance === entry.id}
           >
             <MapPin />
-            {e.name}
+            {entry.name}
           </Button>
         ))}
       </div>
-      <section className="mt-7 grid gap-8 md:grid-cols-2">
-        <div
-          className="relative min-h-72 rounded-lg border bg-surface p-5"
-          aria-label="Planta ilustrativa"
-        >
-          <p className="text-xs font-semibold text-muted-foreground">GALERIA FICTÍCIA</p>
-          <div className="mt-8 flex justify-between text-xs text-primary">
-            <span>Norte</span>
-            <span>Leste</span>
-            <span>Sul</span>
-          </div>
-          <div className="relative mt-4 h-40 border-y-8 border-primary/30">
-            <div className="absolute inset-x-0 top-1/2 border-t-2 border-dashed border-primary" />
-            <div className="absolute left-[20%] top-4 bg-card p-3 text-xs">
-              <ShoppingBag className="mb-1 h-5 w-5 text-primary" />
-              Movida
-            </div>
-            <div className="absolute right-[15%] bottom-4 bg-card p-3 text-xs">
-              <ShoppingBag className="mb-1 h-5 w-5 text-primary" />
-              Essenza
-            </div>
-          </div>
-        </div>
+
+      <section className="mt-7 grid items-start gap-8 md:grid-cols-[1.15fr_0.85fr]">
+        <VisitMap entrance={entrance} route={route} />
         <div>
           {error && (
             <p role="alert" className="text-destructive">
@@ -99,27 +95,36 @@ export function VisitPage({ initialEntrance }: { initialEntrance?: string | unde
             <div className="py-8">
               <Navigation className="h-7 w-7 text-primary" />
               <h2 className="mt-3 font-display text-3xl">Nenhuma parada ativa</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Reserve um produto para ver a loja e a ordem sugerida no mapa.
+              </p>
               <Button asChild variant="outline" className="mt-4">
                 <Link to="/app">Explorar produtos</Link>
               </Button>
             </div>
           ) : (
             <>
-              <h2 className="font-display text-3xl">Seu caminho</h2>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                <h2 className="font-display text-3xl">Seu caminho</h2>
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                Comece na entrada escolhida e siga os números. Os tempos são apenas ilustrativos.
+              </p>
               <ol className="mt-5 space-y-5">
-                {route.map((s, i) => (
-                  <li key={s.id} className="flex gap-3 border-b pb-4">
+                {route.map((stop, index) => (
+                  <li key={stop.id} className="flex gap-3 border-b pb-4">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground">
-                      {i + 1}
+                      {index + 1}
                     </span>
                     <div>
-                      <h3 className="font-semibold">{s.name}</h3>
+                      <h3 className="font-semibold">{stop.name}</h3>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {s.location_label} · {s.minutes} min ilustrativos
+                        {stop.location_label} · {stop.minutes} min ilustrativos
                       </p>
                       <p className="mt-1 text-xs">
-                        Código {s.code} ·{" "}
-                        {s.status === "CONFIRMED" ? "Confirmada" : "Aguardando confirmação"}
+                        Código {stop.code} ·{" "}
+                        {stop.status === "CONFIRMED" ? "Confirmada" : "Aguardando confirmação"}
                       </p>
                     </div>
                   </li>
@@ -134,5 +139,135 @@ export function VisitPage({ initialEntrance }: { initialEntrance?: string | unde
         </div>
       </section>
     </main>
+  );
+}
+
+function VisitMap({
+  entrance,
+  route,
+}: {
+  entrance: Entrance;
+  route: ReturnType<typeof buildVisit>;
+}) {
+  const origin = entrances.find((entry) => entry.id === entrance) ?? entrances[0];
+  const originPoint = mapNodes[origin.node];
+  const routePoints = [
+    originPoint,
+    ...route.flatMap((stop) => [galleryCenter, mapNodes[stop.node]]),
+  ]
+    .filter((point) => point !== undefined)
+    .map((point) => `${point.x},${point.y}`)
+    .join(" ");
+
+  return (
+    <div className="overflow-hidden rounded-lg border bg-surface">
+      <div className="flex items-center justify-between gap-3 border-b bg-card px-4 py-3">
+        <div>
+          <p className="text-xs font-semibold">Galeria fictícia</p>
+          <p className="mt-0.5 text-[0.65rem] text-muted-foreground">Você começa na {origin.name}</p>
+        </div>
+        <Navigation className="h-5 w-5 text-primary" />
+      </div>
+      <svg
+        viewBox="0 0 400 300"
+        className="h-auto w-full"
+        role="img"
+        aria-label={`Mapa ilustrativo a partir da ${origin.name}, com ${route.length} paradas: ${route.map((stop) => stop.name).join(", ") || "nenhuma"}`}
+      >
+        <path
+          d="M200 28V272M82 100L200 150L360 150M82 100L200 150L318 210L200 272"
+          fill="none"
+          className="stroke-border"
+          strokeWidth="18"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M200 28V272M82 100L200 150L360 150M82 100L200 150L318 210L200 272"
+          fill="none"
+          className="stroke-card"
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {routePoints && (
+          <polyline
+            points={routePoints}
+            fill="none"
+            className="stroke-primary"
+            strokeWidth="4"
+            strokeDasharray="7 5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        )}
+        <rect x="163" y="132" width="74" height="36" rx="8" className="fill-gold-soft" />
+        <text x="200" y="147" textAnchor="middle" className="fill-primary text-[9px] font-semibold">
+          PRAÇA
+        </text>
+        <text x="200" y="159" textAnchor="middle" className="fill-primary text-[9px]">
+          CENTRAL
+        </text>
+
+        {entrances.map((entry) => {
+          const point = mapNodes[entry.node];
+          const active = entry.id === entrance;
+          return (
+            <g key={entry.id}>
+              {active && (
+                <circle cx={point.x} cy={point.y} r="13" className="fill-background stroke-primary" strokeWidth="2" />
+              )}
+              <circle cx={point.x} cy={point.y} r="7" className={active ? "fill-primary" : "fill-muted-foreground"} />
+              <text
+                x={point.x}
+                y={entry.node === 4 ? 294 : entry.node === 0 ? 12 : point.y - 17}
+                textAnchor="middle"
+                className={`text-[9px] font-semibold ${active ? "fill-primary" : "fill-muted-foreground"}`}
+              >
+                {entry.name.toUpperCase()}
+              </text>
+            </g>
+          );
+        })}
+
+        {galleryStores.map((store) => {
+          const point = mapNodes[store.node];
+          const stopIndex = route.findIndex((stop) => stop.id === store.id);
+          const active = stopIndex >= 0;
+          return (
+            <g key={store.id}>
+              <rect
+                x={point.x - 62}
+                y={point.y - 29}
+                width="124"
+                height="58"
+                rx="10"
+                className={active ? "fill-card stroke-primary" : "fill-card stroke-border"}
+                strokeWidth={active ? 2 : 1}
+              />
+              <text x={point.x} y={point.y - 3} textAnchor="middle" className="fill-foreground text-[12px] font-semibold">
+                {store.name}
+              </text>
+              <text x={point.x} y={point.y + 14} textAnchor="middle" className="fill-muted-foreground text-[9px]">
+                {active ? `PARADA ${stopIndex + 1}` : "SEM PARADA ATIVA"}
+              </text>
+              {active && (
+                <>
+                  <circle cx={point.x + 48} cy={point.y - 23} r="12" className="fill-primary" />
+                  <text x={point.x + 48} y={point.y - 19} textAnchor="middle" className="fill-primary-foreground text-[10px] font-bold">
+                    {stopIndex + 1}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      <div className="flex flex-wrap gap-x-4 gap-y-2 border-t bg-card px-4 py-3 text-[0.65rem] text-muted-foreground">
+        <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full border-2 border-primary" />Entrada atual</span>
+        <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t-2 border-dashed border-primary" />Percurso sugerido</span>
+        <span>Números = ordem das lojas</span>
+      </div>
+    </div>
   );
 }

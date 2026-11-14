@@ -19,12 +19,17 @@ export function InsightsPanel({ insights }: { insights: MerchantInsights | undef
     insights?.recent_requests ?? 0,
     insights?.previous_requests ?? 0,
   );
+
   return (
     <section className="mt-7 space-y-8" aria-label="Insights da loja">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="eyebrow text-primary">Últimos 7 dias · estimativa demonstrativa</p>
+          <p className="eyebrow text-primary">Interações reais da demonstração · agregadas por loja</p>
           <h2 className="editorial-title mt-2 text-4xl">Radar de oportunidades</h2>
+          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+            Pesquisas, clientes distintos, favoritos e reservas alimentam estes números. O lojista
+            recebe somente totais da própria loja, nunca nomes, contatos ou frases de clientes.
+          </p>
         </div>
         <Button
           variant="ghost"
@@ -43,16 +48,16 @@ export function InsightsPanel({ insights }: { insights: MerchantInsights | undef
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
           { label: "Pesquisas com itens da loja", value: demand.data?.recent_searches ?? 0 },
-          { label: "Pesquisas nos 7 dias anteriores", value: demand.data?.previous_searches ?? 0 },
+          { label: "Clientes com interesse", value: demand.data?.interested_customers ?? 0 },
           { label: "Solicitações recentes", value: insights?.recent_requests ?? 0 },
           {
             label: "Favoritos agregados",
-            value: demand.data?.products.reduce((n, p) => n + p.favorites, 0) ?? 0,
+            value: demand.data?.products.reduce((total, product) => total + product.favorites, 0) ?? 0,
           },
-        ].map((s) => (
-          <article key={s.label} className="rounded-lg border bg-card p-4">
-            <strong className="font-display text-4xl">{s.value}</strong>
-            <p className="mt-2 text-xs text-muted-foreground">{s.label}</p>
+        ].map((stat) => (
+          <article key={stat.label} className="rounded-lg border bg-card p-4">
+            <strong className="font-display text-4xl">{stat.value}</strong>
+            <p className="mt-2 text-xs text-muted-foreground">{stat.label}</p>
           </article>
         ))}
       </div>
@@ -76,27 +81,27 @@ export function InsightsPanel({ insights }: { insights: MerchantInsights | undef
       <div>
         <h3 className="font-display text-3xl">Produtos no radar</h3>
         <div className="mt-4 divide-y">
-          {demand.data?.products.map((p) => (
-            <article key={p.product_id} className="grid gap-3 py-4 sm:grid-cols-[1fr_auto]">
+          {demand.data?.products.map((product) => (
+            <article key={product.product_id} className="grid gap-3 py-4 sm:grid-cols-[1fr_auto]">
               <div>
-                <h4 className="text-sm font-semibold">{p.name}</h4>
+                <h4 className="text-sm font-semibold">{product.name}</h4>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {p.searches} pesquisas · {p.favorites} favoritos · {p.requests} solicitações
+                  {product.interested_customers} clientes · {product.searches} pesquisas · {product.favorites} favoritos · {product.requests} solicitações · {product.confirmed_requests} confirmadas
                 </p>
-                {p.last_searched_at && (
+                {product.last_searched_at && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Última pesquisa: {new Date(p.last_searched_at).toLocaleString("pt-BR")}
+                    Última pesquisa: {new Date(product.last_searched_at).toLocaleString("pt-BR")}
                   </p>
                 )}
               </div>
               <p
-                className={`text-xs sm:max-w-64 ${p.availability === "UNAVAILABLE" && p.searches > 0 ? "text-destructive" : "text-primary"}`}
+                className={`text-xs sm:max-w-64 ${product.availability === "UNAVAILABLE" && product.searches > 0 ? "text-destructive" : "text-primary"}`}
               >
-                {p.availability === "UNAVAILABLE" && p.searches > 0
+                {product.availability === "UNAVAILABLE" && product.searches > 0
                   ? "Há interesse, mas a oferta está indisponível. Revise a disponibilidade."
-                  : p.searches > 0 && p.requests === 0
+                  : product.searches > 0 && product.requests === 0
                     ? "Pesquisado sem solicitações recentes. Revise preço e apresentação."
-                    : p.favorites > 0
+                    : product.favorites > 0
                       ? "Interesse salvo: prepare o atendimento presencial."
                       : "Aguardando novos sinais de interesse."}
               </p>
@@ -107,19 +112,19 @@ export function InsightsPanel({ insights }: { insights: MerchantInsights | undef
       </div>
       <div className="border-t pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="font-display text-3xl">Análise Gemini</h3>
+          <h3 className="font-display text-3xl">Análise CapimAI</h3>
           <Button
             variant="outline"
             disabled={mutation.isPending || !demand.data}
             onClick={() => mutation.mutate()}
           >
-            {mutation.isPending ? <LoaderCircle className="animate-spin" /> : <Sparkles />}Analisar
-            oportunidades
+            {mutation.isPending ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
+            Analisar oportunidades
           </Button>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Ao analisar, somente contagens agregadas e produtos da loja são enviados à IA. Nenhuma
-          identidade ou texto de cliente.
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          Ao analisar, a CapimAI recebe as contagens reais acima, incluindo clientes distintos,
+          favoritos, solicitações e confirmações. Nenhuma identidade ou frase de cliente é enviada.
         </p>
         {mutation.error && (
           <p role="alert" className="mt-4 text-sm text-destructive">
@@ -130,8 +135,8 @@ export function InsightsPanel({ insights }: { insights: MerchantInsights | undef
           <div className="mt-5">
             <p className="text-sm leading-relaxed">{mutation.data.summary}</p>
             <ul className="mt-4 space-y-3">
-              {mutation.data.opportunities.slice(0, 3).map((item, i) => (
-                <li key={i} className="flex gap-3 text-sm">
+              {mutation.data.opportunities.slice(0, 3).map((item, index) => (
+                <li key={index} className="flex gap-3 text-sm">
                   <Sparkles className="h-4 w-4 shrink-0 text-primary" />
                   {item.slice(0, 400)}
                 </li>
