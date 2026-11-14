@@ -9,7 +9,7 @@ const storeNodes: Record<string, number> = { movida: 1, essenza: 3 };
 export function buildVisit(reservations: Reservation[], entrance: Entrance, now = Date.now()) {
   const origin = entrances.find((e) => e.id === entrance)?.node ?? 0;
   const unique = new Map(reservations.filter((r) => isActiveReservation(r, now)).map((r) => [r.store_id, { ...r.store, code: r.code, status: r.status, node: storeNodes[r.store_id] ?? 2 }]));
-  let current = origin;
+  let current: number = origin;
   const remaining = [...unique.values()];
   const route: (typeof remaining[number] & { minutes: number })[] = [];
   while (remaining.length) {

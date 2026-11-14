@@ -7,7 +7,7 @@ import { getCustomerReservations } from "@/features/reservations/functions";
 import { buildVisit, entrances, validEntrance, type Entrance } from "./model";
 import { toast } from "sonner";
 
-export function VisitPage({ initialEntrance }: { initialEntrance?: string }) {
+export function VisitPage({ initialEntrance }: { initialEntrance?: string | undefined }) {
   const [entrance, setEntrance] = useState<Entrance>(validEntrance(initialEntrance));
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const fromQr = initialEntrance ?? sessionStorage.getItem("capim-entrance"); setEntrance(validEntrance(fromQr)); const timer = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(timer); }, [initialEntrance]);

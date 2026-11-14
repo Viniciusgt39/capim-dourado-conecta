@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
-import { Gift, Home, Navigation, ShoppingBag, UserRound } from "lucide-react";
+import { Gift, Heart, Home, Navigation, ShoppingBag, UserRound } from "lucide-react";
 import { getCurrentProfile } from "@/features/auth/functions";
 import { CartProvider, useCart } from "@/components/app/cart-context";
 import { Brand } from "@/components/app/brand";

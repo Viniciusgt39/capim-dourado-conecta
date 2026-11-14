@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getAiConsent, interpretSearch, setAiConsent } from "./ai.functions";
 import { isSpiderClick } from "./contracts";
-import type { SearchFilters } from "@/lib/catalog";
+import { emptyFilters, type SearchFilters } from "@/lib/catalog";
 
 type Recognition = { lang: string; interimResults: boolean; continuous: boolean; onresult: (event: { results: ArrayLike<{ 0: { transcript: string } }> }) => void; onerror: () => void; onend: () => void; start: () => void };
 type RecognitionConstructor = new () => Recognition;
@@ -18,18 +18,20 @@ export function SearchPanel({ onResult }: { onResult: (filters: SearchFilters) =
   const [listening, setListening] = useState(false);
   const [spider, setSpider] = useState(false);
   const clicks = useRef(0);
-  const lastQuery = useRef("");
+  const lastSearch = useRef<{ query: string; filters: SearchFilters } | null>(null);
   const queryClient = useQueryClient();
   const search = useServerFn(interpretSearch);
   const saveConsent = useServerFn(setAiConsent);
   const { data: consent = false } = useQuery({ queryKey: ["ai-consent"], queryFn: () => getAiConsent() });
   const preference = useMutation({ mutationFn: (value: boolean) => saveConsent({ data: { consent: value } }), onSuccess: (value) => queryClient.setQueryData(["ai-consent"], value), onError: (e) => toast.error(e.message) });
-  const mutation = useMutation({ mutationFn: (value: string) => search({ data: { query: value, requestId: crypto.randomUUID() } }), onSuccess: (result) => { lastQuery.current = query.trim(); onResult(result.filters); queryClient.invalidateQueries({ queryKey: ["search-demand"] }); } });
+  const mutation = useMutation({ mutationFn: (value: string) => search({ data: { query: value, requestId: crypto.randomUUID() } }), onSuccess: (result, value) => { lastSearch.current = { query: value, filters: result.filters }; onResult(result.filters); queryClient.invalidateQueries({ queryKey: ["search-demand"] }); } });
   useEffect(() => { if (!spider) return; const timer = setTimeout(() => setSpider(false), 4500); return () => clearTimeout(timer); }, [spider]);
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (mutation.isPending || !query.trim() || !consent) return;
-    if (lastQuery.current === query.trim()) return;
+    if (mutation.isPending) return;
+    if (!query.trim()) { onResult(emptyFilters); return; }
+    if (!consent) { toast.info("Autorize o Gemini ou utilize os filtros manuais."); return; }
+    if (lastSearch.current?.query === query.trim()) { onResult(lastSearch.current.filters); return; }
     mutation.mutate(query.trim());
   }
   function countClick() {
