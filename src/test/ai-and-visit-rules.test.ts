@@ -87,6 +87,10 @@ describe("Comportamento e demanda", () => {
     expect(ranked.candidates.map((p) => p.id)).toEqual(["blusa", "tenis"]);
     expect(ranked.candidates[0]?.score).toBe(7);
   });
+  it("mantém cartões disponíveis quando todos os produtos novos já foram escolhidos", () => {
+    const ranked = rankBehavior([product("camisa", "Moda")], ["camisa"], []);
+    expect(ranked.candidates.map((p) => p.id)).toEqual(["camisa"]);
+  });
 });
 describe("Visita ilustrativa", () => {
   const now = Date.parse("2026-11-14T12:00:00Z");
