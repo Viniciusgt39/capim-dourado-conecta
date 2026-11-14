@@ -4,9 +4,9 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { AlertTriangle, Cat, Check, Clock3, MapPin, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { catalogQueryOptions } from "@/features/catalog/functions";
-import { cancelReservation, createReservation, getCustomerReservations } from "@/features/reservations/functions";
+import { cancelReservation, createReservation, getCustomerReservations, simulateDemoAvailability } from "@/features/reservations/functions";
 import { formatMoney, productImages, type Offer, type Product } from "@/lib/catalog";
-import { effectiveStatus, formatRemaining, remainingMilliseconds, statusLabels, type Reservation } from "@/lib/reservations";
+import { demoAvailabilityDelayMs, effectiveStatus, formatRemaining, remainingMilliseconds, statusLabels, type Reservation } from "@/lib/reservations";
 import { useCart } from "@/components/app/cart-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -34,11 +34,24 @@ export function ReservationsPage() {
       if (!idempotencyKey.current) idempotencyKey.current = crypto.randomUUID();
       return createReservation({ data: { items, idempotencyKey: idempotencyKey.current } });
     },
-    onSuccess: () => {
+    onSuccess: ({ groupId }) => {
       clear(); idempotencyKey.current = null; setReviewOpen(false); setTab("reservations");
       queryClient.invalidateQueries({ queryKey: ["customer-reservations"] });
       queryClient.invalidateQueries({ queryKey: ["account"] });
+      queryClient.invalidateQueries({ queryKey: ["search-demand"] });
+      queryClient.invalidateQueries({ queryKey: ["merchant-insights"] });
       toast.success("Solicitação enviada. Cada loja recebeu apenas sua parte.");
+      const delayMs = demoAvailabilityDelayMs();
+      toast.info(`Uma confirmação de disponibilidade simulada chegará em ${Math.round(delayMs / 1000)} segundos.`);
+      window.setTimeout(() => {
+        simulateDemoAvailability({ data: { groupId } })
+          .then(({ created }) => {
+            if (!created) return;
+            queryClient.invalidateQueries({ queryKey: ["account"] });
+            toast.success("Simulação: a disponibilidade foi confirmada. Veja suas notificações.");
+          })
+          .catch((error) => toast.error(error.message));
+      }, delayMs);
     },
     onError: (error) => toast.error(error.message),
   });

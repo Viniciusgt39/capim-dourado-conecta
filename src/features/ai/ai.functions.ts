@@ -191,7 +191,7 @@ export const analyzeOpportunities = createServerFn({ method: "POST" })
     return await askCapimAI(
       gatewayKey(),
       analysisSchema,
-      'Formato JSON obrigatório: {"summary":"texto em português","productIds":[],"opportunities":["ação"]}. Analise somente agregados da loja em português. Até 3 oportunidades acionáveis: disponibilidade, sortimento ou atenção a produto pesquisado/favoritado. Não invente números, vendas, causalidade ou probabilidade de compra. Se menos de 3 pesquisas em cada período, explicite amostra insuficiente para tendência. productIds vazio. summary até 2 frases; oportunidades até 160 caracteres cada. Não prometa estoque nem integração real.',
+      'Formato JSON obrigatório: {"summary":"texto em português","productIds":[],"opportunities":["ação"]}. Analise somente agregados reais da loja em português: searches, favorites, requests, confirmed_requests e interested_customers consideram as interações persistidas de todas as contas de cliente, sem identidades. Até 3 oportunidades acionáveis: disponibilidade, sortimento ou atenção a produto pesquisado/favoritado/reservado. Não invente números, vendas, causalidade ou probabilidade de compra. Se menos de 3 pesquisas em cada período, explicite amostra insuficiente para tendência. Não trate poucas contas como representatividade estatística. productIds vazio. summary até 2 frases; oportunidades até 160 caracteres cada. Não prometa estoque nem integração real.',
       JSON.stringify(data),
       persistDenial,
     );
