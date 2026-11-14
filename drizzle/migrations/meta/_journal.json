@@ -15,6 +15,13 @@
       "when": 1794631079309,
       "tag": "0001_seed_capim_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794631106403,
+      "tag": "0002_seed_capim_demo_journey",
+      "breakpoints": true
     }
   ]
 }
