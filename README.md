@@ -34,10 +34,10 @@ Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro 
 ## Fluxo para demonstrar
 
 1. Abra a landing e entre como cliente demo.
-2. Autorize o Gemini na vitrine e pesquise “Quero um tênis branco até R$ 250”. A autorização é opcional para navegar e usar filtros manuais.
+2. Autorize a CapimAI na vitrine e pesquise “Quero um tênis branco até R$ 250”. A autorização é opcional para navegar e usar filtros manuais.
 3. Abra o tênis, compare Movida e Essenza, favorite e adicione ofertas à seleção.
 4. Adicione outro item, revise e confirme a solicitação multiloja.
-5. Veja os códigos e a contagem regressiva de duas horas.
+5. Veja os códigos e a contagem regressiva de duas horas. Entre 5 e 20 segundos após a solicitação, uma notificação de disponibilidade explicitamente simulada aparece no sino; ela não altera o status nem substitui o lojista.
 6. Saia e entre como Lojista Movida; confirme somente a parte da Movida.
 7. Entre como Lojista Essenza; recuse ou marque uma oferta como indisponível.
 8. Volte ao cliente e atualize as reservas para observar os estados independentes.
@@ -52,12 +52,13 @@ Também há cadastro por e-mail com confirmação, Google e Lovable. O cadastro 
 - Estados pendente, confirmada, recusada, cancelada e expirada; alerta abaixo de 30 minutos e cancelamento em duas etapas.
 - Painel do lojista com confirmação/recusa e disponibilidade manual compartilhada.
 - Indisponibilidade recusa automaticamente pendentes afetadas, sem cancelar confirmadas silenciosamente.
-- Recomendações determinísticas, cupons ilustrativos e notificações in-app.
-- Insights agregados sem favoritos identificáveis e regra explicável de tendência.
+- Recomendações em cartões de produto, cupons ilustrativos e notificações in-app.
+- Insights agregados de pesquisas, clientes distintos, favoritos, solicitações e confirmações reais da demonstração, sem favoritos identificáveis.
 - Easter eggs acessíveis da aranha e do gato, com redução de movimento.
-- Gemini real: extração estruturada, sugestões de interesses e análise de oportunidades por ação explícita.
-- Pesquisas agregadas da própria loja; tendências conservadoras, sem identidade dos clientes.
-- Visita com entrada por link QR e rota fictícia das reservas ativas.
+- CapimAI: extração estruturada com Gemini, sugestões de produtos e análise de oportunidades por ação explícita.
+- Agregados da própria loja atualizados pelas interações das contas; tendências conservadoras, sem identidade dos clientes.
+- Visita com entrada por link QR, mapa fictício legível e paradas numeradas das reservas ativas.
+- Lojas de moda com convite “te aguarda nos provadores”.
 - Missões simuladas e cupons persistentes na conta.
 
 ## Fora do MVP / sem integração real

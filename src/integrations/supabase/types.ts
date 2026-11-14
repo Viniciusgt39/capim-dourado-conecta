@@ -248,6 +248,7 @@ export type Database = {
       notifications: {
         Row: {
           created_at: string
+          deduplication_key: string | null
           id: string
           message: string
           read_at: string | null
@@ -257,6 +258,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deduplication_key?: string | null
           id?: string
           message: string
           read_at?: string | null
@@ -266,6 +268,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deduplication_key?: string | null
           id?: string
           message?: string
           read_at?: string | null
@@ -686,6 +689,10 @@ export type Database = {
           p_offer_id: string
         }
         Returns: undefined
+      }
+      simulate_demo_availability: {
+        Args: { p_group_id: string }
+        Returns: number
       }
     }
     Enums: {

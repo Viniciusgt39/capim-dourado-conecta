@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 
 export function NotificationsPanel() {
   const queryClient = useQueryClient();
-  const { data } = useQuery({ queryKey: ["account"], queryFn: () => getAccountData() });
+  const { data } = useQuery({ queryKey: ["account"], queryFn: () => getAccountData(), refetchInterval: 5_000 });
   const unread = data?.notifications.filter((item) => !item.read_at).length ?? 0;
   const mutation = useMutation({
     mutationFn: (id: string) => markNotificationRead({ data: { id } }),
@@ -16,7 +16,7 @@ export function NotificationsPanel() {
     <Sheet>
       <SheetTrigger asChild><Button variant="ghost" size="icon" className="relative rounded-full" aria-label={`Notificações: ${unread} não lidas`}><Bell />{unread > 0 && <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[0.58rem] font-semibold text-primary-foreground">{unread}</span>}</Button></SheetTrigger>
       <SheetContent className="w-full overflow-y-auto sm:max-w-md">
-        <SheetHeader><SheetTitle className="editorial-title text-3xl">Notificações</SheetTitle><SheetDescription>Alertas locais da demonstração, sem push externo.</SheetDescription></SheetHeader>
+        <SheetHeader><SheetTitle className="editorial-title text-3xl">Notificações</SheetTitle><SheetDescription>Alertas internos da demonstração, sem push externo. Confirmações automáticas são identificadas como simulação.</SheetDescription></SheetHeader>
         <div className="mt-6 space-y-3">
           {data?.notifications.length === 0 && <div className="rounded-lg bg-surface p-6 text-center text-sm text-muted-foreground">Nenhuma notificação por aqui.</div>}
           {data?.notifications.map((notification) => (

@@ -29,6 +29,13 @@
       "when": 1794643307902,
       "tag": "0003_add_ai_search_signals_and_demo_missions",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794646140976,
+      "tag": "0004_add_demo_notifications_and_real_customer_aggregates",
+      "breakpoints": true
     }
   ]
 }

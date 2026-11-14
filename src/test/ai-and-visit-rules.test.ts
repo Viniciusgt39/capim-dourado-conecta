@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { demandTrend, isSpiderClick, validateExtraction } from "@/features/ai/contracts";
 import { rankBehavior } from "@/features/recommendations/model";
-import { buildVisit, validEntrance } from "@/features/visit/model";
+import { buildVisit, entrances, validEntrance } from "@/features/visit/model";
 import { emptyFilters, filterProducts, type CatalogData, type Product } from "@/lib/catalog";
 import type { Reservation } from "@/lib/reservations";
 
@@ -87,6 +87,10 @@ describe("Comportamento e demanda", () => {
     expect(ranked.candidates.map((p) => p.id)).toEqual(["blusa", "tenis"]);
     expect(ranked.candidates[0]?.score).toBe(7);
   });
+  it("mantém cartões disponíveis quando todos os produtos novos já foram escolhidos", () => {
+    const ranked = rankBehavior([product("camisa", "Moda")], ["camisa"], []);
+    expect(ranked.candidates.map((p) => p.id)).toEqual(["camisa"]);
+  });
 });
 describe("Visita ilustrativa", () => {
   const now = Date.parse("2026-11-14T12:00:00Z");
@@ -113,5 +117,10 @@ describe("Visita ilustrativa", () => {
       now,
     );
     expect(stops.map((s) => s.id)).toEqual(["essenza", "movida"]);
+  });
+  it("Casa Aurora recebe uma parada própria, separada da Entrada Leste", () => {
+    const stops = buildVisit([r("casa-aurora", "2026-11-14T14:00:00Z")], "norte", now);
+    expect(stops[0]?.node).toBe(5);
+    expect(stops[0]?.node).not.toBe(entrances.find((entry) => entry.id === "leste")?.node);
   });
 });

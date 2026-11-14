@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { CartItem, Reservation } from "@/lib/reservations";
 import type { Availability } from "@/lib/catalog";
@@ -23,6 +24,17 @@ export const createReservation = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message || "Não foi possível criar a reserva.");
     return { groupId };
+  });
+
+export const simulateDemoAvailability = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ groupId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: created, error } = await context.supabase.rpc("simulate_demo_availability", {
+      p_group_id: data.groupId,
+    });
+    if (error) throw new Error("Não foi possível criar a notificação simulada.");
+    return { created: created ?? 0 };
   });
 
 export const cancelReservation = createServerFn({ method: "POST" })

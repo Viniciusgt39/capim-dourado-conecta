@@ -13,8 +13,9 @@ O aplicativo é um protótipo não oficial com produtos, lojas, preços e benef�
 - Uma transação cria um grupo e uma reserva por loja. Prazo de duas horas calculado no banco, preço congelado, envio idempotente e decisões independentes.
 - Disponibilidade manual: não existe promessa de estoque físico nem dedução automática. Indisponibilidade recusa pendentes afetadas, preservando confirmadas.
 - Cupons ilustrativos de boas-vindas/confirmação e notificações internas.
-- Busca Gemini real com filtros validados, autorização separada e resultados apenas do catálogo; sugestões por favoritos/reservas e análise Gemini acionada pelo cliente.
-- Radar de pesquisas e oportunidades agregadas da loja, rota fictícia com entrada por QR e missões demonstrativas persistentes.
+- CapimAI (Gemini no provedor) com filtros validados, autorização separada e resultados apenas do catálogo; recomendações exibidas como cartões de produtos.
+- Radar com pesquisas, clientes distintos, favoritos, solicitações e confirmações reais agregadas da loja; rota fictícia com mapa numerado e missões persistentes.
+- Notificações simuladas de disponibilidade entre 5 e 20 segundos, identificadas como simulação e sem alterar o status decidido pelo lojista.
 
 ## 3. Mapa de arquivos e responsabilidades
 
@@ -72,7 +73,7 @@ Políticas PostgreSQL RLS são a barreira de acesso. Funções autenticadas rece
 
 - **TanStack Start + React + TypeScript:** mantém a stack existente, oferece páginas e funções tipadas no mesmo projeto e evita migrar para Express/React Router sem benefício demonstrado. TypeScript explicita contratos entre módulos.
 - **TanStack Query:** cache, atualização e invalidação após mutações sem duplicar estado remoto nos componentes.
-- **Lovable Cloud / PostgreSQL:** autenticação gerenciada, transações, chaves estrangeiras, índices e RLS atendem ao isolamento de clientes/lojistas e à reserva multiloja. SQLite isolado não atenderia a essa concorrência/distribuição sem outro servidor.
+- **Lovable Cloud / PostgreSQL:** autenticação gerenciada, transações, chaves estrangeiras, índices e RLS atendem ao isolamento de clientes/lojistas e à reserva multiloja. SQLite isolado não atenderia a essa concorrência/distribuição sem outro servidor. Para hospedar na Vercel, mantém-se esse serviço externo de banco/autenticação: a Vercel serve a aplicação e as server functions, não substitui o Cloud. Configurar as variáveis de ambiente e validar o adaptador/destino publicado são etapas de deploy ainda não executadas; trocar de banco agora não traz benefício que compense recriar segurança e transações.
 - **Tailwind v4 + componentes Radix/shadcn existentes + Lucide:** reaproveitamento da interface e controles acessíveis, sem um segundo sistema visual.
 - **Gemini 3.1 Flash Lite via Lovable AI Gateway + Vercel AI SDK:** modelo leve disponível no catálogo autenticado, adequado à extração curta. Usa Chat Completions na superfície de retenção zero declarada pelo gateway, stream consumido no servidor, chave exclusivamente no servidor e correlação das chamadas. Gemini recebe JSON mode mais instrução explícita dos campos, com validação Zod local; não afirmar que o provedor garante schema estrito. Extração leve não exige agente autônomo nem treinamento próprio. A chave colada no chat não foi incorporada ao código; recomenda-se revogá-la. Chamadas consomem créditos Lovable AI.
 - **Vitest + Playwright:** regras puras e percursos reais, respectivamente; testes de UI não substituem verificação de autorização no banco.
@@ -104,7 +105,7 @@ WhatsApp automático, ERP, estoque físico, pagamento, provador inteligente e fi
 
 **Interesses:** favoritos e reservas não canceladas/recusadas → ranking conteúdo → candidatos → Gemini seleciona somente IDs permitidos. Categoria favoritada soma 3, reservada 5; marca favoritada 1, reservada 2; promoção 1. São sinais explicáveis, não probabilidades calibradas nem previsão de venda. Nenhum modelo foi treinado. Sem sinais, a análise não chama IA.
 
-**Lojista:** `search_demand_insights()` → contagens por produto/loja, sete dias contra sete anteriores → tendência somente com ao menos três registros em ambos os períodos e crescimento maior que 20%. Pesquisa conta itens retornados, não cliques nem compras; uma pesquisa pode sinalizar produtos de várias lojas. Sem resultados não atribuímos demanda a uma loja por adivinhação. Análise Gemini envia somente agregados mediante clique.
+**Lojista:** `search_demand_insights()` → contagens reais por produto/loja, clientes distintos, favoritos, solicitações, confirmações e sete dias contra sete anteriores → tendência somente com ao menos três registros em ambos os períodos e crescimento maior que 20%. Pesquisa conta itens retornados, não cliques nem compras; uma pesquisa pode sinalizar produtos de várias lojas. Sem resultados não atribuímos demanda a uma loja por adivinhação. Análise CapimAI envia somente agregados mediante clique, nunca identidade ou frase.
 
 **QR/visita:** configure QR externo para `https://DOMINIO-DO-APP/?entrada=norte`, `sul` ou `leste`. O aplicativo usa o parâmetro do link, não geolocalização. Landing guarda entrada na sessão do navegador; após login, abra Visita. Link direto `/app/visita?entrada=sul` também funciona. Câmera/scanner e QR físico oficial não foram implementados. Mapa é galeria fictícia; reservas ativas são deduplicadas por loja e ordenadas por proximidade ilustrativa. Tempos não são medições reais.
 
@@ -120,3 +121,22 @@ WhatsApp automático, ERP, estoque físico, pagamento, provador inteligente e fi
 - Não adicionar chamadas de IA por renderização, atualização periódica ou clique em cada produto. Leituras de insights são SQL; Gemini somente por ação explícita.
 - Provider denial persiste bloqueio; a retomada requer acesso restaurado e ação do responsável. Não existe rotina de probe ou troca silenciosa de modelo.
 - Apenas preparar escala: eventos minimizados e índices sustentam consultas atuais; paginação e agregados periódicos são próximas etapas, não entregas existentes.
+
+## 11. Ajustes atuais e handoff para refatoração
+
+- A interface chama a experiência de **CapimAI**; o identificador técnico `google/gemini-3.1-flash-lite` e o adaptador continuam inalterados.
+- `simulate_demo_availability()` valida dono/papel, cria somente para reservas pendentes ativas e usa `deduplication_key` para não repetir alertas. O atraso é local de 5–20 segundos; fechar a aba antes dele impede o agendamento. Não há push nem alteração automática de status.
+- Favoritos e reservas invalidam as consultas de demanda; o lojista também pode atualizar manualmente. A análise da CapimAI faz nova leitura agregada somente no clique.
+- A conta tem um único atalho de navegação e logout no topo. Produtos de Moda exibem o convite aos provadores sem alegar integração física.
+- O mapa continua uma galeria fictícia; entrada, praça, corredores, linha tracejada e números apenas comunicam a ordem calculada.
+
+### Documentos originais: alterações e remoções
+
+**Nenhum original foi alterado ou removido.** Permanecem preservados em `docs/scizor38/`:
+
+1. `README.md` da equipe;
+2. `Capim_Dourado_Connect_Escopo_Geral_V2.md`;
+3. `Planejamento Técnico_inicial.md`;
+4. `regulamento-hackarun-2026.md`.
+
+Os documentos de manutenção alterados neste projeto são este guia, o `README.md` da raiz, `DECISOES.md`, `USO_DE_IA.md`, `TESTES_E_EVIDENCIAS.md` e `roadmap.md`. As alterações neles registram implementação, decisões e verificações; não substituem as fontes originais.

@@ -11,7 +11,7 @@ export function validEntrance(value: unknown): Entrance {
   return entrances.find((e) => e.id === value)?.id ?? "norte";
 }
 /** Fictional linear gallery: no geographic accuracy or physical navigation claim. */
-const storeNodes: Record<string, number> = { movida: 1, essenza: 3 };
+const storeNodes: Record<string, number> = { movida: 1, essenza: 3, "casa-aurora": 5 };
 export function buildVisit(reservations: Reservation[], entrance: Entrance, now = Date.now()) {
   const origin = entrances.find((e) => e.id === entrance)?.node ?? 0;
   const unique = new Map(

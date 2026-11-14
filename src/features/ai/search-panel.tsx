@@ -61,7 +61,7 @@ export function SearchPanel({ onResult }: { onResult: (filters: SearchFilters) =
       return;
     }
     if (!consent) {
-      toast.info("Autorize o Gemini ou utilize os filtros manuais.");
+      toast.info("Autorize o CapimAI ou utilize os filtros manuais.");
       return;
     }
     if (lastSearch.current?.query === query.trim()) {
@@ -106,7 +106,7 @@ export function SearchPanel({ onResult }: { onResult: (filters: SearchFilters) =
     }
   }
   return (
-    <section className="mt-7" aria-label="Pesquisa com Gemini">
+    <section className="mt-7" aria-label="Pesquisa com CapimAI">
       <form onSubmit={submit} className="flex gap-2" role="search">
         <div className="relative min-w-0 flex-1">
           <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
@@ -142,10 +142,10 @@ export function SearchPanel({ onResult }: { onResult: (filters: SearchFilters) =
           checked={consent}
           disabled={preference.isPending}
           onCheckedChange={(value) => preference.mutate(value === true)}
-          aria-label="Autorizar Gemini"
+          aria-label="Autorizar CapimAI"
         />
         <span>
-          Autorizo enviar minha pesquisa e sinais de favoritos/reservas ao Gemini para busca e
+          Autorizo enviar minha pesquisa e sinais de favoritos/reservas ao CapimAI para busca e
           sugestões. Sem nome ou e-mail. Posso revogar aqui. Não envie dados pessoais. A voz pode
           usar serviço do navegador.
         </span>

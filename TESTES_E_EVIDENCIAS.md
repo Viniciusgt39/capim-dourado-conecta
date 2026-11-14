@@ -2,6 +2,24 @@
 
 Data da verificação: 14/11/2026 (UTC).
 
+## Incremento CapimAI, notificações e mapa — 14/11/2026
+
+`bun run test`: **4 arquivos / 21 testes aprovados**. Os novos casos cobrem o intervalo de 5–20 segundos, recomendação visual mesmo quando todos os candidatos já foram escolhidos e parada própria da Casa Aurora, separada da Entrada Leste. O limite superior inicialmente gerou 20.001 ms; o cálculo foi corrigido para no máximo 20.000 ms e a suíte foi repetida.
+
+Fluxo real em Chromium, com as contas fictícias:
+
+- CapimAI aparece na interface e “Gemini” não aparece; a análise de interesses retornou três cartões de produtos, não apenas uma lista textual.
+- Conta tem apenas um atalho principal e “Sair da conta” está no topo; o retorno à landing foi verificado.
+- A página da camisa exibiu o convite aos provadores nas duas lojas de moda.
+- Uma reserva criada pela interface avisou 19 segundos; o aviso de disponibilidade simulada chegou após 20,1 segundos de relógio, incluindo renderização. O painel abriu com a mensagem persistente e a reserva de teste foi cancelada pela interface.
+- O mapa fictício carregou reservas ativas e mostrou Casa Aurora como parada 1 e Movida como parada 2, com corredores, Praça Central, entradas e legenda. Em 390 × 844, a largura do documento permaneceu 390 px.
+- O lojista Movida recebeu agregados reais de pesquisas, clientes distintos, favoritos, solicitações e confirmações, sem identidades ou frases. A CapimAI analisou esses totais e declarou amostra insuficiente para tendência.
+- Nenhum erro de página/console foi capturado. O AI Gateway registrou três chamadas HTTP 200 na execução final: interesses e oportunidades, além das verificações anteriores do mesmo fluxo.
+
+Capturas inspecionadas em `docs/evidencias/`: `07-conta-sair.png`, `08-recomendacoes-produtos.png`, `09-mapa-rota-mobile.png` e `10-insights-reais.png`.
+
+As reservas e notificações criadas nesta verificação foram removidas após os testes. A notificação continua sendo uma simulação explícita e não altera o estado da reserva nem substitui o lojista. Vercel, voz, login social externo e dados reais de clientes não foram verificados/utilizados.
+
 ## Incremento Gemini/mobile — 14/11/2026
 
 `bun run test`: **4 arquivos / 18 testes aprovados**. Novos casos verificam filtro de 250 reais, rejeição de facetas inventadas, mesma oferta respeitando mínimo/máximo, aranha no clique 13, base mínima de tendência, peso de reservas no ranking, entrada por QR e exclusão de paradas expiradas.
