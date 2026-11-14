@@ -15,6 +15,9 @@ const mapNodes: Record<number, { x: number; y: number }> = {
   4: { x: 200, y: 272 },
 };
 const galleryCenter = { x: 200, y: 150 };
+function nodePoint(node: number) {
+  return mapNodes[node] ?? galleryCenter;
+}
 const galleryStores = [
   { id: "movida", name: "Movida", node: 1 },
   { id: "essenza", name: "Essenza", node: 3 },
@@ -150,12 +153,11 @@ function VisitMap({
   route: ReturnType<typeof buildVisit>;
 }) {
   const origin = entrances.find((entry) => entry.id === entrance) ?? entrances[0];
-  const originPoint = mapNodes[origin.node];
+  const originPoint = nodePoint(origin.node);
   const routePoints = [
     originPoint,
-    ...route.flatMap((stop) => [galleryCenter, mapNodes[stop.node]]),
+    ...route.flatMap((stop) => [galleryCenter, nodePoint(stop.node)]),
   ]
-    .filter((point) => point !== undefined)
     .map((point) => `${point.x},${point.y}`)
     .join(" ");
 
@@ -210,7 +212,7 @@ function VisitMap({
         </text>
 
         {entrances.map((entry) => {
-          const point = mapNodes[entry.node];
+          const point = nodePoint(entry.node);
           const active = entry.id === entrance;
           return (
             <g key={entry.id}>
@@ -231,7 +233,7 @@ function VisitMap({
         })}
 
         {galleryStores.map((store) => {
-          const point = mapNodes[store.node];
+          const point = nodePoint(store.node);
           const stopIndex = route.findIndex((stop) => stop.id === store.id);
           const active = stopIndex >= 0;
           return (
