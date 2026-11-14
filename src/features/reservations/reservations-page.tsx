@@ -101,9 +101,12 @@ function ExpirationCat({ reservations }: { reservations: Reservation[] }) {
     const key = `capim-cat-${expired.id}`;
     if (window.localStorage.getItem(key)) return;
     window.localStorage.setItem(key, "seen"); setVisible(true);
+  }, [reservations, now]);
+  useEffect(() => {
+    if (!visible) return;
     const timer = window.setTimeout(() => setVisible(false), 4200);
     return () => window.clearTimeout(timer);
-  }, [reservations, now]);
+  }, [visible]);
   if (!visible) return null;
   return <div className="cat-crossing" role="status" aria-label="Uma reserva expirou"><div className="flex items-center gap-2 rounded-full bg-foreground px-4 py-3 text-background shadow-lift"><Cat className="h-7 w-7" /><span className="text-xs">Uma reserva expirou… o gato passou por aqui.</span></div></div>;
 }
