@@ -24,7 +24,12 @@ async function requireConsent(client: SupabaseClient<Database>, userId: string) 
     .maybeSingle();
   if (error || !data?.consent)
     throw new Error("Autorize o uso de IA antes de enviar sua pesquisa ou interesses ao CapimAI.");
-  const state = await client
+  await requireAiAvailable();
+}
+async function requireAiAvailable() {
+  // Global circuit breaker is server-only; callers are already authenticated.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const state = await supabaseAdmin
     .from("ai_access_state")
     .select("blocked_reason")
     .eq("id", "gemini")
@@ -177,15 +182,7 @@ export const analyzeOpportunities = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     // Merchant action sends only aggregates, never customer text or identity.
-    const state = await context.supabase
-      .from("ai_access_state")
-      .select("blocked_reason")
-      .eq("id", "gemini")
-      .maybeSingle();
-    if (state.error || state.data?.blocked_reason)
-      throw new Error(
-        state.data?.blocked_reason ?? "Não foi possível verificar o acesso ao CapimAI.",
-      );
+    await requireAiAvailable();
     const { data, error } = await context.supabase.rpc("search_demand_insights");
     if (error) throw new Error("Não foi possível consultar os sinais da sua loja.");
     return await askCapimAI(
