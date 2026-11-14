@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- The product uses TanStack Start server functions with Lovable Cloud authentication and PostgreSQL RLS, because customer/merchant permissions and multi-store reservation transactions must be enforced server-side.
