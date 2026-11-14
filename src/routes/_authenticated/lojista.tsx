@@ -1,7 +1,8 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BarChart3, BellRing, Check, Clock3, LogOut, PackageCheck, Store, TrendingUp, X } from "lucide-react";
+import { BarChart3, BellRing, Check, Clock3, LogOut, PackageCheck, Store, X } from "lucide-react";
+import { InsightsPanel } from "@/features/merchant/insights-panel";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentProfile } from "@/features/auth/functions";
@@ -32,13 +33,14 @@ export const Route = createFileRoute("/_authenticated/lojista")({
 
 function MerchantPage() {
   const profile = Route.useLoaderData();
-  const store = profile.store!;
+  const store = profile.store;
   const [tab, setTab] = useState<"requests" | "confirmed" | "offers" | "insights">("requests");
   const { data: reservations = [] } = useQuery({ queryKey: ["merchant-reservations"], queryFn: () => getMerchantReservations(), refetchInterval: 30_000 });
   const { data: catalog } = useQuery(catalogQueryOptions);
   const { data: insights } = useQuery({ queryKey: ["merchant-insights"], queryFn: () => getMerchantInsights() });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  if (!store) return null;
   const pending = reservations.filter((reservation) => effectiveStatus(reservation) === "PENDING");
   const confirmed = reservations.filter((reservation) => effectiveStatus(reservation) === "CONFIRMED");
   const offers = catalog?.products.flatMap((product) => product.offers.filter((offer) => offer.store_id === store.id).map((offer) => ({ ...offer, product }))) ?? [];
@@ -46,7 +48,7 @@ function MerchantPage() {
   return <div className="min-h-screen bg-background"><header className="border-b bg-card"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-8"><div><Brand to="/lojista" /><span className="mt-2 inline-flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-[0.62rem] font-medium text-primary"><Store className="h-3 w-3" />{store.name}</span></div><div className="flex items-center gap-2"><div className="hidden text-right sm:block"><p className="text-xs font-medium">{profile.displayName}</p><p className="mt-1 text-[0.62rem] text-muted-foreground">{store.location_label}</p></div><Button variant="ghost" size="icon" onClick={signOut} aria-label="Sair da conta"><LogOut /></Button></div></div></header><main className="mx-auto max-w-7xl px-4 py-8 sm:px-8 sm:py-10"><div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow text-primary">Atendimento da loja</p><h1 className="editorial-title mt-2 text-5xl">Painel de reservas</h1></div><p className="max-w-sm text-xs leading-relaxed text-muted-foreground">Acesso restrito à {store.name}. Atualizações aparecem ao recarregar a consulta.</p></div><section className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4"><Stat label="Novas solicitações" value={pending.length} icon={BellRing} /><Stat label="Reservas confirmadas" value={confirmed.length} icon={PackageCheck} /><Stat label="Ofertas da loja" value={offers.length} icon={Store} /><Stat label="Pedidos em 7 dias" value={insights?.recent_requests ?? 0} icon={BarChart3} /></section><nav className="mt-8 flex gap-1 overflow-x-auto rounded-lg bg-surface p-1" aria-label="Seções do painel">{(["requests", "confirmed", "offers", "insights"] as const).map((value) => <button type="button" key={value} onClick={() => setTab(value)} className={`h-10 flex-1 whitespace-nowrap rounded-md px-4 text-xs font-medium ${tab === value ? "bg-card shadow-sm" : "text-muted-foreground"}`}>{value === "requests" ? `Solicitações (${pending.length})` : value === "confirmed" ? "Confirmadas" : value === "offers" ? "Disponibilidade" : "Insights"}</button>)}</nav>
       {(tab === "requests" || tab === "confirmed") && <section className="mt-6 space-y-4">{(tab === "requests" ? pending : confirmed).length === 0 ? <div className="rounded-lg bg-surface py-16 text-center"><Clock3 className="mx-auto h-7 w-7 text-primary" /><h2 className="mt-3 font-display text-3xl">Nada aguardando atendimento</h2><p className="mt-2 text-sm text-muted-foreground">Novas solicitações da sua loja aparecerão aqui.</p></div> : (tab === "requests" ? pending : confirmed).map((reservation) => <MerchantReservation key={reservation.id} reservation={reservation} actionable={tab === "requests"} />)}</section>}
       {tab === "offers" && <section className="mt-6"><div className="mb-5 rounded-lg bg-gold-soft/45 p-4 text-xs leading-relaxed text-muted-foreground"><strong className="text-foreground">Modo manual de confirmação.</strong> Marcar uma oferta como indisponível reflete no catálogo compartilhado e recusa automaticamente reservas pendentes com essa oferta. Reservas já confirmadas não são canceladas. Integração ERP e quota automática: <strong>Em breve</strong>.</div><div className="grid gap-4 md:grid-cols-2">{offers.map((offer) => <OfferAvailability key={offer.id} offer={offer} />)}</div></section>}
-      {tab === "insights" && <InsightsTab insights={insights} />}
+      {tab === "insights" && <InsightsPanel insights={insights} />}
     </main></div>;
 }
 
@@ -73,8 +75,3 @@ function OfferAvailability({ offer }: { offer: ReturnType<typeof getOffersForSto
 }
 function getOffersForStore() { return [] as { id: string; price_cents: number; availability: "AVAILABLE" | "UNAVAILABLE" | "CHECK_WITH_STORE"; product: { name: string; brand: string; image_key: string } }[]; }
 
-function InsightsTab({ insights }: { insights: { recent_requests: number; previous_requests: number; products: { product_id: string; name: string; favorites: number }[] } | undefined }) {
-  const enough = !!insights && insights.recent_requests >= 3 && insights.previous_requests >= 3;
-  const growing = enough && insights.recent_requests > insights.previous_requests * 1.2;
-  return <section className="mt-6"><div className="rounded-lg border bg-card p-6"><div className="flex items-start gap-3"><TrendingUp className="h-6 w-6 text-primary" /><div><h2 className="font-display text-3xl">{enough ? growing ? "Demanda em crescimento" : "Demanda estável" : "Dados insuficientes para tendência"}</h2><p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">Estimativa demonstrativa por regra estatística: são necessários ao menos 3 pedidos em cada período e crescimento acima de 20%. Não é aprendizado de máquina.</p></div></div><div className="mt-6 grid grid-cols-2 gap-4"><Stat label="Últimos 7 dias" value={insights?.recent_requests ?? 0} icon={BarChart3} /><Stat label="7 dias anteriores" value={insights?.previous_requests ?? 0} icon={Clock3} /></div></div><div className="mt-5 rounded-lg border bg-card p-6"><h2 className="font-display text-3xl">Interesse agregado por produto</h2><p className="mt-2 text-xs text-muted-foreground">Contagem de favoritos sem identificar pessoas.</p><div className="mt-5 space-y-3">{insights?.products.map((product) => <div key={product.product_id} className="flex items-center justify-between border-b pb-3 text-sm last:border-0"><span>{product.name}</span><strong className="text-primary">{product.favorites} favoritos</strong></div>)}</div></div></section>;
-}
