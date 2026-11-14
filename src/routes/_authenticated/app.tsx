@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from "@tanstack/react-router";
-import { Gift, Heart, Home, Navigation, ShoppingBag, UserRound } from "lucide-react";
+import { Gift, Home, Navigation, ShoppingBag, UserRound } from "lucide-react";
 import { getCurrentProfile } from "@/features/auth/functions";
 import { CartProvider, useCart } from "@/components/app/cart-context";
 import { Brand } from "@/components/app/brand";
@@ -54,15 +54,9 @@ function AppChrome({ name }: { name: string }) {
           </nav>
           <div className="flex items-center gap-1">
             <NotificationsPanel />
-            <Link
-              to="/app/conta"
-              className="ml-1 hidden items-center gap-2 rounded-full bg-surface px-3 py-2 text-xs font-medium sm:flex"
-            >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold-soft text-primary">
-                <Heart className="h-3 w-3" />
-              </span>
-              <span className="max-w-24 truncate">{name.split(" ")[0]}</span>
-            </Link>
+            <span className="ml-1 hidden max-w-28 truncate px-3 text-xs font-medium text-muted-foreground sm:block">
+              {name.split(" ")[0]}
+            </span>
             <Link
               to="/app/reservas"
               className="relative ml-1 rounded-full p-2 text-foreground md:hidden"

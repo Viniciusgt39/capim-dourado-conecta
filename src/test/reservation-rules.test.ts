@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { effectiveStatus, formatRemaining, isActiveReservation, remainingMilliseconds, type Reservation } from "@/lib/reservations";
+import { demoAvailabilityDelayMs, effectiveStatus, formatRemaining, isActiveReservation, remainingMilliseconds, type Reservation } from "@/lib/reservations";
 
 const reservation = (status: Reservation["status"], expiresAt: string) => ({ status, expires_at: expiresAt }) as Reservation;
 
@@ -25,5 +25,11 @@ describe("Regras de expiração e cancelamento", () => {
   it("reserva expirada não permanece ativa para cancelamento", () => {
     expect(isActiveReservation(reservation("PENDING", "2026-11-14T11:00:00Z"), now)).toBe(false);
     expect(remainingMilliseconds("2026-11-14T11:00:00Z", now)).toBe(0);
+  });
+
+  it("a notificação simulada espera no mínimo 5 e no máximo 20 segundos", () => {
+    expect(demoAvailabilityDelayMs(0)).toBe(5_000);
+    expect(demoAvailabilityDelayMs(0.5)).toBe(12_500);
+    expect(demoAvailabilityDelayMs(1)).toBe(20_000);
   });
 });

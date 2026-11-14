@@ -64,3 +64,9 @@ export const statusLabels: Record<ReservationStatus, string> = {
 export function isActiveReservation(reservation: Reservation, now = Date.now()) {
   return ["PENDING", "CONFIRMED"].includes(effectiveStatus(reservation, now));
 }
+
+/** Random inclusive delay from 5 to 20 seconds for the explicitly simulated notification. */
+export function demoAvailabilityDelayMs(random = Math.random()) {
+  const normalized = Math.min(1, Math.max(0, random));
+  return 5_000 + Math.floor(normalized * 15_001);
+}

@@ -3,7 +3,7 @@ import type { z } from "zod";
 import { createLovableAiGatewayProvider } from "./gateway-helpers.server";
 import { GEMINI_MODEL } from "../contracts";
 
-export async function askGemini<T>(
+export async function askCapimAI<T>(
   key: string,
   schema: z.ZodType<T>,
   system: string,
@@ -29,11 +29,11 @@ export async function askGemini<T>(
           JSON.parse((error.text ?? "").replace(/^```(?:json)?\s*|\s*```$/g, "").trim()),
         );
       } catch {
-        throw new Error("O Gemini não retornou uma interpretação válida. Use os filtros manuais.");
+        throw new Error("O CapimAI não retornou uma interpretação válida. Use os filtros manuais.");
       }
     }
     if (APICallError.isInstance(error)) {
-      let message = "Não foi possível consultar o Gemini. Use os filtros manuais.";
+      let message = "Não foi possível consultar o CapimAI. Use os filtros manuais.";
       let type = "";
       try {
         const body = JSON.parse(error.responseBody ?? "{}");
@@ -53,11 +53,11 @@ export async function askGemini<T>(
       )
         await block(message);
       if (error.statusCode === 401)
-        message = "A integração Gemini precisa de configuração pelo responsável do projeto.";
+        message = "A integração CapimAI precisa de configuração pelo responsável do projeto.";
       throw new Error(message);
     }
     throw new Error(
-      "A análise Gemini não foi concluída. Os filtros manuais continuam disponíveis.",
+      "A análise CapimAI não foi concluída. Os filtros manuais continuam disponíveis.",
     );
   }
 }

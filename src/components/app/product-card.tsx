@@ -12,7 +12,11 @@ export function ProductCard({ product }: { product: Product }) {
   const favorite = favoriteIds.includes(product.id);
   const mutation = useMutation({
     mutationFn: () => toggleFavorite({ data: { productId: product.id, favorite: !favorite } }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["favorites"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["search-demand"] });
+      queryClient.invalidateQueries({ queryKey: ["merchant-insights"] });
+    },
     onError: (error) => toast.error(error.message),
   });
   const offer = getLowestOffer(product);
