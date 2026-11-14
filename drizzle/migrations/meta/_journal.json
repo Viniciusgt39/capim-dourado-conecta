@@ -43,6 +43,13 @@
       "when": 1794646753073,
       "tag": "0005_accelerate_demo_reservation_expiration",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794647466719,
+      "tag": "0006_restrict_ai_access_state",
+      "breakpoints": true
     }
   ]
 }
