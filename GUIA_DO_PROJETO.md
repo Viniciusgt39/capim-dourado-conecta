@@ -13,7 +13,8 @@ O aplicativo é um protótipo não oficial com produtos, lojas, preços e benef�
 - Uma transação cria um grupo e uma reserva por loja. Prazo de duas horas calculado no banco, preço congelado, envio idempotente e decisões independentes.
 - Disponibilidade manual: não existe promessa de estoque físico nem dedução automática. Indisponibilidade recusa pendentes afetadas, preservando confirmadas.
 - Cupons ilustrativos de boas-vindas/confirmação e notificações internas.
-- Busca local e recomendações por regras; a integração Gemini e os novos módulos estão em implementação, não verificados nesta versão inicial do guia.
+- Busca Gemini real com filtros validados, autorização separada e resultados apenas do catálogo; sugestões por favoritos/reservas e análise Gemini acionada pelo cliente.
+- Radar de pesquisas e oportunidades agregadas da loja, rota fictícia com entrada por QR e missões demonstrativas persistentes.
 
 ## 3. Mapa de arquivos e responsabilidades
 
@@ -37,6 +38,18 @@ O aplicativo é um protótipo não oficial com produtos, lojas, preços e benef�
 | `src/features/account/account-page.tsx` | Interface da conta. |
 | `src/features/reservations/functions.ts` | Consultas autenticadas e chamadas das transações de reserva. |
 | `src/features/reservations/reservations-page.tsx` | Selecionados, revisão, reservas, cancelamento e expiração. |
+| `src/features/ai/contracts.ts` | Schemas pequenos, validação contra catálogo, gatilho de 13 cliques e critério estatístico de demanda. |
+| `src/features/ai/ai.functions.ts` | Autorização, consulta dos dados mínimos, extração Gemini, registro minimizado e análises autenticadas. |
+| `src/features/ai/server/` | Adaptador Gemini, helpers de gateway e IDs por chamada; apenas servidor. |
+| `src/features/ai/search-panel.tsx` | Busca, autorização revogável, voz editável, erros e aranha. |
+| `src/features/recommendations/model.ts` | Ranking por categoria/marca de favoritos e reservas, excluindo itens já escolhidos. |
+| `src/features/recommendations/recommendations-section.tsx` | Sugestões e ação de análise de interesses. |
+| `src/features/merchant/contracts.ts` | Contrato de contagens agregadas por produto. |
+| `src/features/merchant/insights-panel.tsx` | Radar, períodos, interesse e análise de oportunidades. |
+| `src/features/visit/` | Entradas, ordenação fictícia de paradas ativas, planta ilustrativa e compartilhamento manual. |
+| `src/features/missions/` | Listagem de missões, conclusão simulada e cupom persistido em transação. |
+| `src/routes/_authenticated/app.visita.tsx` | URL da visita e validação do parâmetro entrada. |
+| `src/routes/_authenticated/app.missoes.tsx` | URL das missões com catálogo carregado. |
 | `src/lib/catalog.ts` | Tipos, imagens, filtros, parser local e pontuação base. |
 | `src/lib/reservations.ts` | Tipos e regras puras de status/tempo. |
 | `src/components/app/` | Marca, cartões de produto, carrinho e notificações compartilhadas. |
@@ -51,6 +64,8 @@ O aplicativo é um protótipo não oficial com produtos, lojas, preços e benef�
 
 `profiles` contém perfil, não privilégios. `user_roles` contém papéis; `merchant_memberships` contém vínculo com loja. `products`, `stores` e `offers` são o catálogo. `favorites` pertence ao cliente. `reservation_groups`, `reservations` e `reservation_items` modelam o pedido dividido. `coupons`, `user_coupons` e `notifications` completam o engajamento.
 
+`ai_preferences`: autorização específica por conta. `search_events`: horário, IDs de produtos resultantes, categoria, quantidade e chave idempotente — não armazena a frase original nem áudio. `ai_access_state`: bloqueio persistido se o provedor negar acesso. `mission_completions`: conclusão única por conta/produto/loja. Lojista só lê agregados pelo RPC `search_demand_insights()`, que resolve a loja pela sessão.
+
 Políticas PostgreSQL RLS são a barreira de acesso. Funções autenticadas recebem o cliente do banco limitado à sessão; funções transacionais verificam proprietário/papel/loja. Não use privilégio administrativo para consultas normais. Nunca exponha favoritos individuais ao lojista nem confie em IDs ou papéis enviados pelo navegador.
 
 ## 5. Por que esta stack
@@ -59,7 +74,7 @@ Políticas PostgreSQL RLS são a barreira de acesso. Funções autenticadas rece
 - **TanStack Query:** cache, atualização e invalidação após mutações sem duplicar estado remoto nos componentes.
 - **Lovable Cloud / PostgreSQL:** autenticação gerenciada, transações, chaves estrangeiras, índices e RLS atendem ao isolamento de clientes/lojistas e à reserva multiloja. SQLite isolado não atenderia a essa concorrência/distribuição sem outro servidor.
 - **Tailwind v4 + componentes Radix/shadcn existentes + Lucide:** reaproveitamento da interface e controles acessíveis, sem um segundo sistema visual.
-- **Gemini via Lovable AI Gateway + Vercel AI SDK (incremento planejado):** modelo real solicitado, chave exclusivamente no servidor, estrutura validada e correlação das chamadas. Extração leve não exige agente autônomo nem treinamento de modelo próprio. A chave colada no chat não será incorporada ao código.
+- **Gemini 3.1 Flash Lite via Lovable AI Gateway + Vercel AI SDK:** modelo leve disponível no catálogo autenticado, adequado à extração curta. Usa Chat Completions na superfície de retenção zero declarada pelo gateway, stream consumido no servidor, chave exclusivamente no servidor e correlação das chamadas. Gemini recebe JSON mode mais instrução explícita dos campos, com validação Zod local; não afirmar que o provedor garante schema estrito. Extração leve não exige agente autônomo nem treinamento próprio. A chave colada no chat não foi incorporada ao código; recomenda-se revogá-la. Chamadas consomem créditos Lovable AI.
 - **Vitest + Playwright:** regras puras e percursos reais, respectivamente; testes de UI não substituem verificação de autorização no banco.
 
 ## 6. Preparação para escala, não infraestrutura nova
@@ -82,3 +97,26 @@ Organize por domínio, mantenha funções pequenas e contratos serializáveis. R
 6. Missões e recompensas demonstrativas, sem prometer estacionamento grátis real ou comprovar uma visita inexistente.
 
 WhatsApp automático, ERP, estoque físico, pagamento, provador inteligente e fidelidade oficial permanecem fora desta implementação; os requisitos continuam registrados nas fontes.
+
+## 9. Contratos e percursos novos
+
+**Busca:** `SearchPanel` → `interpretSearch` → sessão/papel/consentimento/bloqueio → catálogo permitido → Gemini → schema Zod → whitelist/limites → `filterProducts` → `search_events` → filtros visíveis. Mesma oferta deve cumprir mínimo e máximo. Pesquisa repetida sem alteração reutiliza o resultado no navegador; 13 cliques não geram 13 chamadas. Falha não vira resposta fictícia nem fallback silencioso.
+
+**Interesses:** favoritos e reservas não canceladas/recusadas → ranking conteúdo → candidatos → Gemini seleciona somente IDs permitidos. Categoria favoritada soma 3, reservada 5; marca favoritada 1, reservada 2; promoção 1. São sinais explicáveis, não probabilidades calibradas nem previsão de venda. Nenhum modelo foi treinado. Sem sinais, a análise não chama IA.
+
+**Lojista:** `search_demand_insights()` → contagens por produto/loja, sete dias contra sete anteriores → tendência somente com ao menos três registros em ambos os períodos e crescimento maior que 20%. Pesquisa conta itens retornados, não cliques nem compras; uma pesquisa pode sinalizar produtos de várias lojas. Sem resultados não atribuímos demanda a uma loja por adivinhação. Análise Gemini envia somente agregados mediante clique.
+
+**QR/visita:** configure QR externo para `https://DOMINIO-DO-APP/?entrada=norte`, `sul` ou `leste`. O aplicativo usa o parâmetro do link, não geolocalização. Landing guarda entrada na sessão do navegador; após login, abra Visita. Link direto `/app/visita?entrada=sul` também funciona. Câmera/scanner e QR físico oficial não foram implementados. Mapa é galeria fictícia; reservas ativas são deduplicadas por loja e ordenadas por proximidade ilustrativa. Tempos não são medições reais.
+
+**Missões:** `complete_demo_mission()` valida cliente/produto/oferta, concede uma conclusão por conta/produto/loja e adiciona cupom ilustrativo. Visita precisa ser explicitamente simulada; não há prova de presença, pontos, estacionamento grátis ou parceria oficial. Recompensa de 10% é conteúdo fictício escolhido para a demo, não um benefício informado pelo shopping. A equipe deve fornecer regras reais antes de produção.
+
+## 10. Cuidados para outra ferramenta
+
+- Não modificar clientes gerados, árvore de rotas gerada ou arquivos de origem protegidos.
+- Não importar helpers server-only diretamente em componentes. Não usar Node-only packages no runtime publicado.
+- Não trocar o modelo/endpoint, limites ou lógica de outras chamadas durante refatoração não relacionada.
+- Não registrar dados pessoais, tokens, prompts completos com dados do usuário ou chaves nos logs.
+- Revogação impede novas chamadas pessoais; exclusão de histórico e política jurídica de retenção ainda precisam de implantação própria antes de produção.
+- Não adicionar chamadas de IA por renderização, atualização periódica ou clique em cada produto. Leituras de insights são SQL; Gemini somente por ação explícita.
+- Provider denial persiste bloqueio; a retomada requer acesso restaurado e ação do responsável. Não existe rotina de probe ou troca silenciosa de modelo.
+- Apenas preparar escala: eventos minimizados e índices sustentam consultas atuais; paginação e agregados periódicos são próximas etapas, não entregas existentes.

@@ -31,3 +31,19 @@ A aranha usa o botão secundário de ajuda após 13 cliques, evitando 13 navega�
 ## Imagens e marca
 
 As oito fotografias de produto foram geradas especificamente para o protótipo, sem logotipos. A identidade é textual e baseada nas cores aproximadas propostas no escopo; não pressupõe autorização de marca oficial.
+
+## Incremento solicitado — 14/11/2026
+
+Estas decisões atualizam os tópicos anteriores sem apagar sua rastreabilidade. Os documentos originais permanecem intocados. Hierarquia adotada conforme solicitação: regulamento → Scizor → planejamento inicial complementar → V2 compatível → imagens.
+
+| Mudança | Implementação e justificativa |
+|---|---|
+| Busca antes apenas local | Gemini 3.1 Flash Lite real, via gateway gerenciado, extração validada. Solicitado para inovação verificável; reduz risco de chave exposta e mantém chamadas server-side. |
+| Recomendações antes só por favoritos | Ranking incorpora reservas com peso maior; análise Gemini explícita interpreta sinais mínimos. Sem treinamento ou probabilidades inventadas, conforme amostra pequena prevista em RF09. |
+| Insights antes favoritos/reservas | Acrescenta pesquisas recentes por produto, comparação temporal e ações de oportunidade. Agregação por vínculo da sessão protege identidades e mantém o escopo de atendimento/descoberta. |
+| Aranha antes em ajuda da landing | Transferida para o botão Buscar, no clique 13, conforme novo pedido. Mesmo texto reutiliza resultado para não causar 13 chamadas; efeito não bloqueia controles e respeita movimento reduzido. |
+| Entrada/roteiro antes adiados | Extensão opcional implementada como roteiro fictício com entrada no link QR, reservas ativas e compartilhamento manual. Não equivale a mapa indoor, localização ou WhatsApp automático. |
+| Gamificação antes pós-MVP | Missões demonstrativas com concessão única de cupom fictício de 10% por produto/loja. Preserva RF08; sem comprovação de visita, estacionamento real, pontos ou parceria. |
+| Preparação de escala | Módulos por domínio, contratos puros, índices e eventos minimizados. Nenhuma fila, microserviço, treinamento ou infraestrutura prematura. |
+
+A chave de terceiro colada no chat não foi armazenada nem usada. Recomenda-se sua revogação. Lovable AI exige créditos; autenticação/catalogação/filtros manuais não dependem da disponibilidade do Gemini. O guia de manutenção foi o primeiro arquivo criado neste incremento.
