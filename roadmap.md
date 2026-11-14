@@ -21,10 +21,10 @@
 - [x] Verificar regras, jornadas reais, mobile e atualizar documentação/justificativas.
 
 ## Ajustes de conta, notificações, mapa e CapimAI
-- [ ] Facilitar sair da conta e remover o segundo atalho redundante para Conta.
-- [ ] Simular notificação de disponibilidade entre 5 e 20 segundos, sem substituir a decisão do lojista.
-- [ ] Tornar o mapa fictício mais legível, com entrada, corredores e paradas numeradas.
-- [ ] Agregar clientes, favoritos e reservas reais nos insights da CapimAI, sem expor identidades.
-- [ ] Renomear a IA na interface, destacar recomendações como produtos e incluir texto dos provadores.
-- [ ] Justificar manutenção do Lovable Cloud para hospedagem na Vercel e documentar integridade das fontes.
-- [ ] Testar os fluxos alterados e registrar evidências.
+- [x] Facilitar sair da conta e remover o segundo atalho redundante para Conta.
+- [x] Simular notificação de disponibilidade entre 5 e 20 segundos, sem substituir a decisão do lojista.
+- [x] Tornar o mapa fictício mais legível, com entrada, corredores e paradas numeradas.
+- [x] Agregar clientes, favoritos e reservas reais nos insights da CapimAI, sem expor identidades.
+- [x] Renomear a IA na interface, destacar recomendações como produtos e incluir texto dos provadores.
+- [x] Justificar manutenção do Lovable Cloud para hospedagem na Vercel e documentar integridade das fontes.
+- [x] Testar os fluxos alterados e registrar evidências.
