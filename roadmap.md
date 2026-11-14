@@ -28,3 +28,7 @@
 - [x] Renomear a IA na interface, destacar recomendações como produtos e incluir texto dos provadores.
 - [x] Justificar manutenção do Lovable Cloud para hospedagem na Vercel e documentar integridade das fontes.
 - [x] Testar os fluxos alterados e registrar evidências.
+
+## Demonstração acelerada de expiração
+- [x] Criar novas reservas com 20 segundos, mantendo documentada a regra original de 2 horas.
+- [x] Fazer o gato aparecer quando o contador zerar e verificar o fluxo no navegador.

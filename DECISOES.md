@@ -14,7 +14,7 @@ O cadastro público cria somente clientes. Papéis ficam em `user_roles`, separa
 
 ## Reservas
 
-Uma operação cria um grupo e uma reserva por loja. O servidor calcula `expires_at = now() + 2 horas`. O preço é copiado para snapshot. Uma chave de idempotência evita duplicação por repetição de envio. A expiração é derivada pela data em leituras e verificada em cada mutação, sem depender de um timer do navegador.
+Uma operação cria um grupo e uma reserva por loja. A regra original calcula `expires_at = now() + 2 horas`; por decisão explícita de demonstração em 14/11/2026, apenas as novas reservas deste mockup usam `now() + 20 segundos` no servidor para permitir observar a expiração e o gato sem esperar duas horas. O preço é copiado para snapshot. Uma chave de idempotência evita duplicação por repetição de envio. A expiração continua derivada pela data e verificada em cada mutação, sem depender do timer do navegador; para produção, restaura-se o prazo de 2 horas.
 
 ## Estoque
 
@@ -26,7 +26,7 @@ A busca por linguagem natural é um parser determinístico local com categorias,
 
 ## Easter eggs
 
-A aranha usa o botão secundário de ajuda após 13 cliques, evitando 13 navegações no CTA principal. O gato aparece uma vez por reserva expirada observada. Ambos respeitam `prefers-reduced-motion` e não bloqueiam controles.
+A aranha usa o botão secundário de ajuda após 13 cliques, evitando 13 navegações no CTA principal. O gato aparece uma vez quando uma reserva antes ativa zera durante a sessão; reservas antigas já expiradas não disparam o easter egg ao abrir a página. Ambos respeitam `prefers-reduced-motion` e não bloqueiam controles.
 
 ## Imagens e marca
 

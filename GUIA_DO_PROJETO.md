@@ -10,7 +10,7 @@ O aplicativo é um protótipo não oficial com produtos, lojas, preços e benef�
 
 - Cadastro público de cliente; lojistas previamente vinculados a suas lojas.
 - Catálogo compartilhado, ofertas por loja, comparação, favoritos privados e carrinho multiloja.
-- Uma transação cria um grupo e uma reserva por loja. Prazo de duas horas calculado no banco, preço congelado, envio idempotente e decisões independentes.
+- Uma transação cria um grupo e uma reserva por loja. Neste mockup, novas reservas usam 20 segundos calculados no banco para demonstrar expiração/gato; a regra original de 2 horas permanece registrada em `DECISOES.md`. Preço congelado, envio idempotente e decisões independentes.
 - Disponibilidade manual: não existe promessa de estoque físico nem dedução automática. Indisponibilidade recusa pendentes afetadas, preservando confirmadas.
 - Cupons ilustrativos de boas-vindas/confirmação e notificações internas.
 - CapimAI (Gemini no provedor) com filtros validados, autorização separada e resultados apenas do catálogo; recomendações exibidas como cartões de produtos.

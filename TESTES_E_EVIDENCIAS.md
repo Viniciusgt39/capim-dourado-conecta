@@ -2,6 +2,14 @@
 
 Data da verificação: 14/11/2026 (UTC).
 
+## Demonstração de expiração em 20 segundos — 14/11/2026
+
+`bun run test`: **4 arquivos / 22 testes aprovados**, incluindo duração demonstrativa de exatamente 20 segundos e formatação `00:00:20`.
+
+Fluxo real em Chromium mobile (390 × 844): a revisão informou explicitamente a aceleração do mockup; uma nova reserva começou em `00:00:19` após a renderização, o gato apareceu após 21,0 segundos desde o clique e o cartão mudou para “Expirada”. Não houve erros de página/console nem rolagem horizontal (`scrollWidth = 390`). Consulta ao banco confirmou exatamente **20,000 segundos** entre `created_at` e `expires_at`. A reserva de teste foi removida depois.
+
+Captura inspecionada: `docs/evidencias/11-gato-expiracao-mobile.png`. A regra original de 2 horas não foi descartada: permanece documentada para produção; somente as novas reservas deste mockup usam o prazo acelerado.
+
 ## Incremento CapimAI, notificações e mapa — 14/11/2026
 
 `bun run test`: **4 arquivos / 21 testes aprovados**. Os novos casos cobrem o intervalo de 5–20 segundos, recomendação visual mesmo quando todos os candidatos já foram escolhidos e parada própria da Casa Aurora, separada da Entrada Leste. O limite superior inicialmente gerou 20.001 ms; o cálculo foi corrigido para no máximo 20.000 ms e a suíte foi repetida.
