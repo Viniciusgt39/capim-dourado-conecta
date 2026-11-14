@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedLojistaRouteImport } from './routes/_authenticated/lojista'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as AuthenticatedAppContaRouteImport } from './routes/_authenticated/app.conta'
 import { Route as AuthenticatedAppReservasRouteImport } from './routes/_authenticated/app.reservas'
@@ -35,6 +36,11 @@ const AuthRoute = AuthRouteImport.update({
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLojistaRoute = AuthenticatedLojistaRouteImport.update({
+  id: '/lojista',
+  path: '/lojista',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app': typeof AuthenticatedAppRouteWithChildren
+  '/lojista': typeof AuthenticatedLojistaRoute
   '/app/conta': typeof AuthenticatedAppContaRoute
   '/app/reservas': typeof AuthenticatedAppReservasRoute
   '/app/': typeof AuthenticatedAppIndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/lojista': typeof AuthenticatedLojistaRoute
   '/app/conta': typeof AuthenticatedAppContaRoute
   '/app/reservas': typeof AuthenticatedAppReservasRoute
   '/app': typeof AuthenticatedAppIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
+  '/_authenticated/lojista': typeof AuthenticatedLojistaRoute
   '/_authenticated/app/conta': typeof AuthenticatedAppContaRoute
   '/_authenticated/app/reservas': typeof AuthenticatedAppReservasRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
@@ -94,19 +103,27 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/app'
+    | '/lojista'
     | '/app/conta'
     | '/app/reservas'
     | '/app/'
     | '/app/produto/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/auth' | '/app/conta' | '/app/reservas' | '/app' | '/app/produto/$id'
+    | '/'
+    | '/auth'
+    | '/lojista'
+    | '/app/conta'
+    | '/app/reservas'
+    | '/app'
+    | '/app/produto/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/app'
+    | '/_authenticated/lojista'
     | '/_authenticated/app/conta'
     | '/_authenticated/app/reservas'
     | '/_authenticated/app/'
@@ -147,6 +164,13 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lojista': {
+      id: '/_authenticated/lojista'
+      path: '/lojista'
+      fullPath: '/lojista'
+      preLoaderRoute: typeof AuthenticatedLojistaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/': {
@@ -199,10 +223,12 @@ const AuthenticatedAppRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
+  AuthenticatedLojistaRoute: typeof AuthenticatedLojistaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
+  AuthenticatedLojistaRoute: AuthenticatedLojistaRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
