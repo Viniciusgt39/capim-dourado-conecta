@@ -10,7 +10,7 @@ export async function askGemini<T>(key: string, schema: z.ZodType<T>, system: st
     return await result.output;
   } catch (error) {
     if (NoObjectGeneratedError.isInstance(error)) {
-      try { return schema.parse(JSON.parse(error.text)); } catch { throw new Error("O Gemini não retornou uma interpretação válida. Use os filtros manuais."); }
+      try { return schema.parse(JSON.parse(error.text ?? "")); } catch { throw new Error("O Gemini não retornou uma interpretação válida. Use os filtros manuais."); }
     }
     if (APICallError.isInstance(error)) {
       let message = "Não foi possível consultar o Gemini. Use os filtros manuais.";
