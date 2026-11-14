@@ -8,3 +8,14 @@
 - [x] Adicionar recomendações, cupons e notificações com regras transparentes.
 - [x] Testar regras críticas e validar os fluxos principais no navegador.
 - [x] Atualizar README e registros de decisões, testes e uso de IA.
+
+## Incremento Gemini e experiência mobile
+- [x] Começar pelo guia de manutenção para outra ferramenta.
+- [ ] Integrar Gemini real com filtros validados, consentimento e erros explícitos.
+- [ ] Refatorar busca, recomendações e insights em módulos de domínio.
+- [ ] Persistir pesquisas minimizadas e oferecer demanda/oportunidades agregadas ao lojista.
+- [ ] Implementar predição explicável por favoritos e reservas com análise Gemini opcional.
+- [ ] Aranha após 13 cliques em Buscar, sem chamadas repetidas.
+- [ ] Guia fictício de visita com entrada por QR e reservas ativas.
+- [ ] Missões e recompensas demonstrativas persistentes.
+- [ ] Verificar regras, jornadas reais, mobile e atualizar documentação/justificativas.
