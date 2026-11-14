@@ -50,6 +50,13 @@
       "when": 1794647466719,
       "tag": "0006_restrict_ai_access_state",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794655486378,
+      "tag": "0007_restrict_offers_public_read",
+      "breakpoints": true
     }
   ]
 }
