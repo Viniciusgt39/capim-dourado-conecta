@@ -47,3 +47,24 @@ Estas decisões atualizam os tópicos anteriores sem apagar sua rastreabilidade.
 | Preparação de escala | Módulos por domínio, contratos puros, índices e eventos minimizados. Nenhuma fila, microserviço, treinamento ou infraestrutura prematura. |
 
 A chave de terceiro colada no chat não foi armazenada nem usada. Recomenda-se sua revogação. Lovable AI exige créditos; autenticação/catalogação/filtros manuais não dependem da disponibilidade do Gemini. O guia de manutenção foi o primeiro arquivo criado neste incremento.
+
+## Ajustes de experiência, dados e hospedagem — 14/11/2026
+
+| Mudança | Implementação e justificativa |
+|---|---|
+| Conta | O nome no cabeçalho deixou de ser um segundo link para Conta. “Sair da conta” passou para o topo da própria página, visível sem abrir Preferências. |
+| Notificação de disponibilidade | Uma função transacional cria notificações internas idempotentes após atraso aleatório de 5 a 20 segundos no navegador. O título e o conteúdo dizem “simulação”; o status da reserva não muda e a decisão real continua exclusiva do lojista. Se a aba for fechada antes do atraso, o agendamento local não é executado; não é push nem fila persistente. |
+| Mapa | A galeria continua fictícia, mas agora mostra entrada atual, praça central, corredores, traçado e paradas numeradas. Não passa a ser orientação física oficial. |
+| CapimAI | CapimAI é o nome do produto na interface. Gemini 3.1 Flash Lite permanece o modelo técnico, sem troca de endpoint ou credencial. Recomendações aparecem como cartões de produtos; a justificativa textual fica recolhida. |
+| Interações reais e LGPD | O radar agrega contas distintas, favoritos, solicitações e confirmações persistidas por loja. A CapimAI recebe somente essas contagens por ação explícita do lojista, sem nome, contato, user ID ou frase. Agregação reduz exposição, mas não elimina a necessidade de finalidade, base legal, retenção e revisão jurídica antes de produção. |
+| Provadores | Ofertas da categoria Moda informam que a loja “te aguarda nos provadores”. É texto de experiência, não integração com provador inteligente. |
+
+### Banco de dados e Vercel
+
+**Lovable Cloud com PostgreSQL e autenticação gerenciada foi mantido.** A Vercel pode hospedar a aplicação e suas funções de servidor, mas não substitui o banco, a autenticação, as políticas RLS ou as transações necessárias para reservas multiloja e isolamento entre lojas. Trocar agora para outro banco exigiria recriar autenticação, RLS, funções transacionais e migração de dados sem benefício funcional demonstrado.
+
+Na implantação Vercel, as variáveis públicas do Cloud e os segredos do servidor devem ser configurados no ambiente de hospedagem; segredos nunca entram no bundle do navegador. O adaptador/destino de deployment e os fluxos publicados precisam ser validados na Vercel antes de afirmar prontidão. Nenhuma migração de hospedagem foi executada neste ajuste.
+
+### Integridade das fontes para o handoff
+
+Nenhum documento original em `docs/scizor38/` foi alterado ou removido, neste ou nos incrementos anteriores: `README.md`, `Capim_Dourado_Connect_Escopo_Geral_V2.md`, `Planejamento Técnico_inicial.md` e `regulamento-hackarun-2026.md`. Foram alterados apenas documentos de manutenção criados neste projeto: `GUIA_DO_PROJETO.md`, `README.md` da raiz, `DECISOES.md`, `USO_DE_IA.md`, `TESTES_E_EVIDENCIAS.md` e `roadmap.md`. Nenhum requisito foi apagado das fontes.
